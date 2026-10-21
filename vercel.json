@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    { "source": "/(.*)\\.html", "destination": "/$1", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/", "destination": "/inicio.html" },
+    { "source": "/inicio", "destination": "/inicio.html" },
+    { "source": "/(.*)", "destination": "/$1.html" }
+  ]
+}
