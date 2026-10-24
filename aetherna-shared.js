@@ -1,11 +1,10 @@
-// aetherna-shared.js - Funcionalidad común para todas las páginas Aetherna
-// aetherna-shared.js - Funcionalidad común para todas las páginas Aetherna
+// aetherna-shared.js - Funcionalidad común y unificada para Aetherna V2
 (function () {
   const $ = id => document.getElementById(id);
 
-  // ===== SPA NAVIGATION =====
+  // ===== SPA NAVIGATION & LAYOUT WRAPPER =====
   let mainContent = $('main-content');
-  if (!mainContent) { // En carga directa, envolver contenido existente
+  if (!mainContent) {
     const wrapper = document.createElement('div');
     wrapper.id = 'main-content';
     const header = $('navbar'), footer = document.querySelector('footer'), player = $('music-player-capsule');
@@ -19,7 +18,7 @@
     mainContent = wrapper;
   }
 
-  // ===== ACTIVE NAV HELPER (CORREGIDO) =====
+  // ===== ACTIVE NAV HELPER (CORREGIDO Y ROBUSTO) =====
   function updateActiveNav(url) {
     const navbar = $('navbar');
     if (!navbar) return;
@@ -31,34 +30,31 @@
         let path = parsed.pathname.replace(/^\//, '').replace(/\.html$/, '');
         return path === '' ? 'inicio' : path;
       } catch {
-        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '');
+        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '').split('#')[0];
         return path === '' ? 'inicio' : path;
       }
     };
 
     const current = getKey(url || window.location.href);
 
-    // Desktop nav links
-    navbar.querySelectorAll('nav a[href]').forEach(a => {
+    // Desktop & Mobile links highlighting
+    navbar.querySelectorAll('a[href]').forEach(a => {
       const href = a.getAttribute('href');
-      const targetKey = getKey(href);
-      const isActive = targetKey === current || (current === 'inicio' && (targetKey === '' || targetKey === 'inicio'));
+      if (!href || href.startsWith('http') || href.startsWith('#') || href.includes('discord.gg')) return;
       
-      a.classList.toggle('text-aetherna-goldLight', isActive);
-      a.classList.toggle('font-bold', isActive);
-      a.classList.toggle('border-b-2', isActive);
-      a.classList.toggle('border-aetherna-goldMain', isActive);
-      a.classList.toggle('text-aetherna-textSoft', !isActive);
-    });
-
-    // Mobile menu links
-    navbar.querySelectorAll('#mobile-menu a[href]').forEach(a => {
-      const href = a.getAttribute('href');
       const targetKey = getKey(href);
       const isActive = targetKey === current || (current === 'inicio' && (targetKey === '' || targetKey === 'inicio'));
 
-      a.classList.toggle('text-aetherna-goldLight', isActive);
-      a.classList.toggle('text-aetherna-textSoft', !isActive);
+      if (a.closest('#mobile-menu')) {
+        a.classList.toggle('text-aetherna-goldLight', isActive);
+        a.classList.toggle('text-aetherna-textSoft', !isActive);
+      } else if (a.closest('nav')) {
+        a.classList.toggle('text-aetherna-goldLight', isActive);
+        a.classList.toggle('font-bold', isActive);
+        a.classList.toggle('border-b-2', isActive);
+        a.classList.toggle('border-aetherna-goldMain', isActive);
+        a.classList.toggle('text-aetherna-textSoft', !isActive);
+      }
     });
   }
 
@@ -87,7 +83,6 @@
       initSearchAndMobile();
       initPageSpecificScripts();
 
-      // URL limpia para pushState (sin .html)
       const cleanUrl = url.replace(/\.html$/, '');
       if (push) history.pushState({ url: cleanUrl }, '', cleanUrl);
       window.scrollTo(0, 0);
@@ -99,12 +94,16 @@
     }
   }
 
+  // Interceptar clics de navegación (Excluyendo anclas internas como #barbaro o #det-barbaro)
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
     if (!a) return;
     const href = a.getAttribute('href');
-    if (!href || href.startsWith('http') || href.startsWith('#') || a.target === '_blank' ||
-        href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('discord.gg')) return;
+    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('discord.gg') || a.target === '_blank') return;
+    
+    // Si es un enlace de ancla interno en la misma página (ej: #barbaro), dejar que el navegador haga scroll nativo
+    if (href.startsWith('#')) return;
+
     e.preventDefault();
     navigate(href);
   });
@@ -112,7 +111,7 @@
   window.addEventListener('popstate', e => { if (e.state?.url) navigate(e.state.url, false); });
   history.replaceState({ url: location.href }, '', location.href);
 
-  // Actualizar nav activo en carga inicial
+  // Inicializar nav activo en carga inicial
   updateActiveNav(location.href);
 
   // ===== REVEAL / STAGGER =====
@@ -128,7 +127,7 @@
     });
   }
 
-  // ===== SEARCH & MOBILE (CORREGIDO) =====
+  // ===== SEARCH & MOBILE (CORREGIDO Y FUNCIONAL) =====
   function initSearchAndMobile() {
     const sBtn = $('search-btn');
     const sModal = $('search-modal');
@@ -153,8 +152,9 @@
     }
   }
 
-  // ===== HASH ROUTING (Razas / Clases) =====
+  // ===== HASH ROUTING (Razas / Clases / Manual si aplica) =====
   function initPageSpecificScripts() {
+    // Si la página usa listados con tarjetas que conmutan vistas por hash o ID
     if ($('razaList')) {
       const RAZAS = ["engendro","mecarionte","bestia","abisal","profundos","celestial","trasgoide","enanos","infernal","elfo","humano"];
       function route() {
@@ -163,11 +163,6 @@
         document.querySelectorAll('.raza-det').forEach(d => d.hidden = !(ok && d.id === 'det-' + k));
         window.scrollTo({ top: 0 }); initRevealObservers();
       }
-      document.querySelectorAll('.raza-card').forEach(c => c.addEventListener('pointermove', ev => {
-        const r = c.getBoundingClientRect();
-        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
-        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
-      }));
       window.addEventListener('hashchange', route); route();
     }
     if ($('clsList')) {
@@ -178,14 +173,14 @@
         document.querySelectorAll('.clase-det').forEach(d => d.hidden = !(ok && d.id === 'det-' + k));
         window.scrollTo({ top: 0 }); initRevealObservers();
       }
-      document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointermove', ev => {
-        const r = c.getBoundingClientRect();
-        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
-        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
-      }));
       window.addEventListener('hashchange', routeCls); routeCls();
     }
   }
+
+  initRevealObservers();
+  initStaggerGroups();
+  initSearchAndMobile();
+  initPageSpecificScripts();
 
   // ===== PERSISTENT AUDIO PLAYER =====
   const audio = $('bg-audio'), cap = $('music-player-capsule');
@@ -265,22 +260,6 @@
       attemptPlay();
     }
   }
-
-  try {
-    const bc = new BroadcastChannel('aetherna-audio');
-    bc.onmessage = e => {
-      if (e.data.type === 'seek') audio.currentTime = e.data.time;
-      if (e.data.type === 'play') audio.play().catch(() => {});
-      if (e.data.type === 'pause') audio.pause();
-      if (e.data.type === 'track') loadTrack(e.data.track);
-    };
-    audio.addEventListener('timeupdate', () => {
-      if (Date.now() - (window.__lastBc || 0) > 500) { window.__lastBc = Date.now(); bc.postMessage({ type: 'seek', time: audio.currentTime }); }
-    });
-    audio.addEventListener('play', () => bc.postMessage({ type: 'play' }));
-    audio.addEventListener('pause', () => bc.postMessage({ type: 'pause' }));
-    skipBtn.addEventListener('click', () => bc.postMessage({ type: 'track', track: (st.track + 1) % TRACKS.length }));
-  } catch (e) {}
 })();
 
 // ===== COSMIC BACKGROUND & EMBER CANVAS =====
@@ -319,6 +298,11 @@
   const canvas = document.getElementById('ember-canvas'); if (!canvas) return;
   const ctx = canvas.getContext('2d');
   function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+  const embers = Array.from({ length: 30 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1, alpha: Math.random(), speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2 }));
+  function animateEmbers() { ctx.clearRect(0, 0, canvas.width, canvas.height); embers.forEach(e => { e.y -= e.speedY; e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2; if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`; ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF'; ctx.fill(); ctx.shadowBlur = 0; }); requestAnimationFrame(animateEmbers); }
+  if (document.readyState === 'complete') animateEmbers(); else window.addEventListener('load', animateEmbers, { once: true });
+})();
   resizeCanvas(); window.addEventListener('resize', resizeCanvas);
   const embers = Array.from({ length: 30 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1, alpha: Math.random(), speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2 }));
   function animateEmbers() { ctx.clearRect(0, 0, canvas.width, canvas.height); embers.forEach(e => { e.y -= e.speedY; e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2; if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`; ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF'; ctx.fill(); ctx.shadowBlur = 0; }); requestAnimationFrame(animateEmbers); }
