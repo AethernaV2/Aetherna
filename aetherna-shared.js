@@ -303,8 +303,3 @@
   function animateEmbers() { ctx.clearRect(0, 0, canvas.width, canvas.height); embers.forEach(e => { e.y -= e.speedY; e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2; if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`; ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF'; ctx.fill(); ctx.shadowBlur = 0; }); requestAnimationFrame(animateEmbers); }
   if (document.readyState === 'complete') animateEmbers(); else window.addEventListener('load', animateEmbers, { once: true });
 })();
-  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
-  const embers = Array.from({ length: 30 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1, alpha: Math.random(), speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2 }));
-  function animateEmbers() { ctx.clearRect(0, 0, canvas.width, canvas.height); embers.forEach(e => { e.y -= e.speedY; e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2; if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`; ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF'; ctx.fill(); ctx.shadowBlur = 0; }); requestAnimationFrame(animateEmbers); }
-  if (document.readyState === 'complete') animateEmbers(); else window.addEventListener('load', animateEmbers, { once: true });
-})();
