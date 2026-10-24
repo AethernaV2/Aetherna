@@ -1,4 +1,5 @@
 // aetherna-shared.js - Funcionalidad común para todas las páginas Aetherna
+// aetherna-shared.js - Funcionalidad común para todas las páginas Aetherna
 (function () {
   const $ = id => document.getElementById(id);
 
@@ -18,26 +19,31 @@
     mainContent = wrapper;
   }
 
-  // ===== ACTIVE NAV HELPER =====
+  // ===== ACTIVE NAV HELPER (CORREGIDO) =====
   function updateActiveNav(url) {
     const navbar = $('navbar');
     if (!navbar) return;
 
-    // Parse URL robustamente: acepta href relativos ("lore.html"), paths ("/lore"), URLs completas
     const getKey = (u) => {
+      if (!u) return 'inicio';
       try {
         const parsed = new URL(u, window.location.origin);
-        return parsed.pathname.replace(/^\//, '').replace(/\.html$/, '') || 'inicio';
+        let path = parsed.pathname.replace(/^\//, '').replace(/\.html$/, '');
+        return path === '' ? 'inicio' : path;
       } catch {
-        return u.replace(/^\.?\//, '').replace(/\.html$/, '') || 'inicio';
+        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '');
+        return path === '' ? 'inicio' : path;
       }
     };
-    const current = getKey(url);
+
+    const current = getKey(url || window.location.href);
 
     // Desktop nav links
     navbar.querySelectorAll('nav a[href]').forEach(a => {
-      const href = getKey(a.getAttribute('href'));
-      const isActive = href === current;
+      const href = a.getAttribute('href');
+      const targetKey = getKey(href);
+      const isActive = targetKey === current || (current === 'inicio' && (targetKey === '' || targetKey === 'inicio'));
+      
       a.classList.toggle('text-aetherna-goldLight', isActive);
       a.classList.toggle('font-bold', isActive);
       a.classList.toggle('border-b-2', isActive);
@@ -47,8 +53,10 @@
 
     // Mobile menu links
     navbar.querySelectorAll('#mobile-menu a[href]').forEach(a => {
-      const href = getKey(a.getAttribute('href'));
-      const isActive = href === current;
+      const href = a.getAttribute('href');
+      const targetKey = getKey(href);
+      const isActive = targetKey === current || (current === 'inicio' && (targetKey === '' || targetKey === 'inicio'));
+
       a.classList.toggle('text-aetherna-goldLight', isActive);
       a.classList.toggle('text-aetherna-textSoft', !isActive);
     });
@@ -84,11 +92,9 @@
       if (push) history.pushState({ url: cleanUrl }, '', cleanUrl);
       window.scrollTo(0, 0);
 
-      // Update active nav after navigation
       updateActiveNav(cleanUrl);
     } catch (e) {
       console.error('SPA navigate failed:', e);
-      // No recarga completa: deja que el enlace funcione nativamente
       window.location.href = url;
     }
   }
@@ -121,13 +127,30 @@
       group.querySelectorAll('.reveal').forEach((item, i) => item.style.transitionDelay = `${i * 55}ms`);
     });
   }
+
+  // ===== SEARCH & MOBILE (CORREGIDO) =====
   function initSearchAndMobile() {
-    const sBtn = $('search-btn'), sModal = $('search-modal'), cSearch = $('close-search');
-    const mBtn = $('mobile-menu-btn'), mMenu = $('mobile-menu');
-    [sBtn, cSearch, mBtn].forEach(el => el?.replaceWith(el.cloneNode(true)));
-    $('search-btn')?.addEventListener('click', () => sModal?.classList.remove('hidden'));
-    $('close-search')?.addEventListener('click', () => sModal?.classList.add('hidden'));
-    $('mobile-menu-btn')?.addEventListener('click', () => mMenu?.classList.toggle('hidden'));
+    const sBtn = $('search-btn');
+    const sModal = $('search-modal');
+    const cSearch = $('close-search');
+    const mBtn = $('mobile-menu-btn');
+    const mMenu = $('mobile-menu');
+
+    if (sBtn && sModal) {
+      const newSBtn = sBtn.cloneNode(true);
+      sBtn.replaceWith(newSBtn);
+      newSBtn.addEventListener('click', () => sModal.classList.remove('hidden'));
+    }
+    if (cSearch && sModal) {
+      const newCSearch = cSearch.cloneNode(true);
+      cSearch.replaceWith(newCSearch);
+      newCSearch.addEventListener('click', () => sModal.classList.add('hidden'));
+    }
+    if (mBtn && mMenu) {
+      const newMBtn = mBtn.cloneNode(true);
+      mBtn.replaceWith(newMBtn);
+      newMBtn.addEventListener('click', () => mMenu.classList.toggle('hidden'));
+    }
   }
 
   // ===== HASH ROUTING (Razas / Clases) =====
@@ -229,7 +252,6 @@
     if (Date.now() - lastSave > 1000) { lastSave = Date.now(); save(); }
   });
 
-  // Restaurar estado solo en la PRIMERA carga real
   if (!window.__aethernaAudioRestored) {
     window.__aethernaAudioRestored = true;
     audio.muted = !!st.muted;
@@ -244,7 +266,6 @@
     }
   }
 
-  // Sync entre pestañas (BroadcastChannel)
   try {
     const bc = new BroadcastChannel('aetherna-audio');
     bc.onmessage = e => {
@@ -262,7 +283,7 @@
   } catch (e) {}
 })();
 
-// ===== COSMIC BACKGROUND (nebulosa + estrellas) =====
+// ===== COSMIC BACKGROUND & EMBER CANVAS =====
 (function () {
   function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
   function makeNoise(seed){
