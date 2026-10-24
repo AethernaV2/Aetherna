@@ -1,193 +1,8 @@
-// aetherna-shared.js - Funcionalidad común y unificada para Aetherna V2
+// aetherna-shared.js - Versión esencial (Audio persistente y Fondos dinámicos)
+
+// ===== REPRODUCTOR DE AUDIO PERSISTENTE =====
 (function () {
   const $ = id => document.getElementById(id);
-
-  // ===== SPA NAVIGATION & LAYOUT WRAPPER =====
-  let mainContent = $('main-content');
-  if (!mainContent) {
-    const wrapper = document.createElement('div');
-    wrapper.id = 'main-content';
-    const header = $('navbar'), footer = document.querySelector('footer'), player = $('music-player-capsule');
-    let node = header?.nextElementSibling;
-    while (node && node !== footer && node !== player) {
-      const next = node.nextElementSibling;
-      wrapper.appendChild(node);
-      node = next;
-    }
-    header?.insertAdjacentElement('afterend', wrapper);
-    mainContent = wrapper;
-  }
-
-  // ===== ACTIVE NAV HELPER (CONVERSION A MINÚSCULAS PARA EVITAR FALLOS) =====
-  function updateActiveNav(url) {
-    const navbar = $('navbar');
-    if (!navbar) return;
-
-    const getKey = (u) => {
-      if (!u) return 'inicio';
-      try {
-        const parsed = new URL(u, window.location.origin);
-        let path = parsed.pathname.replace(/^\//, '').replace(/\.html$/, '').toLowerCase();
-        return path === '' ? 'inicio' : path;
-      } catch {
-        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '').split('#')[0].toLowerCase();
-        return path === '' ? 'inicio' : path;
-      }
-    };
-
-    const current = getKey(url || window.location.href);
-
-    // Desktop & Mobile links highlighting
-    navbar.querySelectorAll('a[href]').forEach(a => {
-      const href = a.getAttribute('href');
-      if (!href || href.startsWith('http') || href.startsWith('#') || href.includes('discord.gg')) return;
-      
-      const targetKey = getKey(href);
-      const isActive = targetKey === current || (current === 'inicio' && (targetKey === '' || targetKey === 'inicio'));
-
-      if (a.closest('#mobile-menu')) {
-        a.classList.toggle('text-aetherna-goldLight', isActive);
-        a.classList.toggle('text-aetherna-textSoft', !isActive);
-      } else if (a.closest('nav')) {
-        a.classList.toggle('text-aetherna-goldLight', isActive);
-        a.classList.toggle('font-bold', isActive);
-        a.classList.toggle('border-b-2', isActive);
-        a.classList.toggle('border-aetherna-goldMain', isActive);
-        a.classList.toggle('text-aetherna-textSoft', !isActive);
-      }
-    });
-  }
-
-  async function navigate(url, push = true) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('Network error');
-      const html = await res.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-
-      const newMain = doc.getElementById('main-content') ||
-        Array.from(doc.querySelectorAll('main, section, [id^="razas"], [id^="clases"], [id^="noticias"], [id^="discord"], [id^="inicio"], [id^="ruta"]'))
-          .reduce((frag, el) => { frag.appendChild(el.cloneNode(true)); return frag; }, document.createDocumentFragment());
-
-      const newTitle = doc.querySelector('title');
-      if (newTitle) document.title = newTitle.textContent;
-
-      mainContent.style.opacity = '0';
-      await new Promise(r => setTimeout(r, 80));
-      mainContent.innerHTML = '';
-      mainContent.appendChild(newMain);
-      mainContent.style.opacity = '1';
-
-      initRevealObservers();
-      initStaggerGroups();
-      initSearchAndMobile();
-      initPageSpecificScripts();
-
-      const cleanUrl = url.replace(/\.html$/, '');
-      if (push) history.pushState({ url: cleanUrl }, '', cleanUrl);
-      window.scrollTo(0, 0);
-
-      updateActiveNav(cleanUrl);
-    } catch (e) {
-      console.error('SPA navigate failed:', e);
-      window.location.href = url;
-    }
-  }
-
-  // Interceptar clics de navegación con cierre automático del menú móvil
-  document.addEventListener('click', e => {
-    const a = e.target.closest('a[href]');
-    if (!a) return;
-    const href = a.getAttribute('href');
-    if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('discord.gg') || a.target === '_blank') return;
-    
-    if (href.startsWith('#')) return;
-
-    e.preventDefault();
-
-    // Cerrar menú móvil al navegar
-    const mobileMenu = $('mobile-menu');
-    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-      mobileMenu.classList.add('hidden');
-    }
-
-    navigate(href);
-  });
-
-  window.addEventListener('popstate', e => { if (e.state?.url) navigate(e.state.url, false); });
-  history.replaceState({ url: location.href }, '', location.href);
-
-  // Actualizar nav activo en carga inicial
-  updateActiveNav(location.href);
-
-  // ===== REVEAL / STAGGER =====
-  function initRevealObservers() {
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(entry => entry.target.classList.toggle('active', entry.isIntersecting));
-    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-  }
-  function initStaggerGroups() {
-    document.querySelectorAll('.stagger-group').forEach(group => {
-      group.querySelectorAll('.reveal').forEach((item, i) => item.style.transitionDelay = `${i * 55}ms`);
-    });
-  }
-
-  // ===== SEARCH & MOBILE (CORREGIDO Y ROBUSTO) =====
-  function initSearchAndMobile() {
-    const sBtn = $('search-btn');
-    const sModal = $('search-modal');
-    const cSearch = $('close-search');
-    const mBtn = $('mobile-menu-btn');
-    const mMenu = $('mobile-menu');
-
-    if (sBtn && sModal) {
-      const newSBtn = sBtn.cloneNode(true);
-      sBtn.replaceWith(newSBtn);
-      newSBtn.addEventListener('click', () => sModal.classList.remove('hidden'));
-    }
-    if (cSearch && sModal) {
-      const newCSearch = cSearch.cloneNode(true);
-      cSearch.replaceWith(newCSearch);
-      newCSearch.addEventListener('click', () => sModal.classList.add('hidden'));
-    }
-    if (mBtn && mMenu) {
-      const newMBtn = mBtn.cloneNode(true);
-      mBtn.replaceWith(newMBtn);
-      newMBtn.addEventListener('click', () => mMenu.classList.toggle('hidden'));
-    }
-  }
-
-  // ===== HASH ROUTING (Razas / Clases) =====
-  function initPageSpecificScripts() {
-    if ($('razaList')) {
-      const RAZAS = ["engendro","mecarionte","bestia","abisal","profundos","celestial","trasgoide","enanos","infernal","elfo","humano"];
-      function route() {
-        const k = location.hash.slice(1), ok = RAZAS.includes(k);
-        $('razaList').hidden = ok;
-        document.querySelectorAll('.raza-det').forEach(d => d.hidden = !(ok && d.id === 'det-' + k));
-        window.scrollTo({ top: 0 }); initRevealObservers();
-      }
-      window.addEventListener('hashchange', route); route();
-    }
-    if ($('clsList')) {
-      const CLASES = ["barbaro","bardo","luchador","monje","explorador","artificiero","picaro","hechicero","brujo","clerigo","paladin","psionico"];
-      function routeCls() {
-        const k = location.hash.slice(1), ok = CLASES.includes(k);
-        $('clsList').hidden = ok;
-        document.querySelectorAll('.clase-det').forEach(d => d.hidden = !(ok && d.id === 'det-' + k));
-        window.scrollTo({ top: 0 }); initRevealObservers();
-      }
-      window.addEventListener('hashchange', routeCls); routeCls();
-    }
-  }
-
-  initRevealObservers();
-  initStaggerGroups();
-  initSearchAndMobile();
-  initPageSpecificScripts();
-
-  // ===== PERSISTENT AUDIO PLAYER =====
   const audio = $('bg-audio'), cap = $('music-player-capsule');
   if (!audio || !cap) return;
 
@@ -267,7 +82,7 @@
   }
 })();
 
-// ===== COSMIC BACKGROUND & EMBER CANVAS =====
+// ===== FONDO CÓSMICO (nebulosa + estrellas) =====
 (function () {
   function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
   function makeNoise(seed){
@@ -299,6 +114,15 @@
 })();
 
 // ===== EMBER CANVAS =====
+(function () {
+  const canvas = document.getElementById('ember-canvas'); if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+  const embers = Array.from({ length: 30 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2 + 1, alpha: Math.random(), speedY: Math.random() * 0.4 + 0.2, speedX: (Math.random() - 0.5) * 0.2 }));
+  function animateEmbers() { ctx.clearRect(0, 0, canvas.width, canvas.height); embers.forEach(e => { e.y -= e.speedY; e.x += e.speedX + Math.sin(e.y * 0.02) * 0.2; if (e.y < 0) { e.y = canvas.height + 10; e.x = Math.random() * canvas.width; } ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(196,160,255, ${0.6 * Math.sin(e.y * 0.01)})`; ctx.shadowBlur = 8; ctx.shadowColor = '#B48CFF'; ctx.fill(); ctx.shadowBlur = 0; }); requestAnimationFrame(animateEmbers); }
+  if (document.readyState === 'complete') animateEmbers(); else window.addEventListener('load', animateEmbers, { once: true });
+})();
 (function () {
   const canvas = document.getElementById('ember-canvas'); if (!canvas) return;
   const ctx = canvas.getContext('2d');
