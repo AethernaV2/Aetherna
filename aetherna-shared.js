@@ -18,7 +18,7 @@
     mainContent = wrapper;
   }
 
-  // ===== ACTIVE NAV HELPER (CORREGIDO Y ROBUSTO) =====
+  // ===== ACTIVE NAV HELPER (CONVERSION A MINÚSCULAS PARA EVITAR FALLOS) =====
   function updateActiveNav(url) {
     const navbar = $('navbar');
     if (!navbar) return;
@@ -27,10 +27,10 @@
       if (!u) return 'inicio';
       try {
         const parsed = new URL(u, window.location.origin);
-        let path = parsed.pathname.replace(/^\//, '').replace(/\.html$/, '');
+        let path = parsed.pathname.replace(/^\//, '').replace(/\.html$/, '').toLowerCase();
         return path === '' ? 'inicio' : path;
       } catch {
-        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '').split('#')[0];
+        let path = u.replace(/^\.?\//, '').replace(/\.html$/, '').split('#')[0].toLowerCase();
         return path === '' ? 'inicio' : path;
       }
     };
@@ -94,24 +94,30 @@
     }
   }
 
-  // Interceptar clics de navegación (Excluyendo anclas internas como #barbaro o #det-barbaro)
+  // Interceptar clics de navegación con cierre automático del menú móvil
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href]');
     if (!a) return;
     const href = a.getAttribute('href');
     if (!href || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:') || href.includes('discord.gg') || a.target === '_blank') return;
     
-    // Si es un enlace de ancla interno en la misma página (ej: #barbaro), dejar que el navegador haga scroll nativo
     if (href.startsWith('#')) return;
 
     e.preventDefault();
+
+    // Cerrar menú móvil al navegar
+    const mobileMenu = $('mobile-menu');
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+    }
+
     navigate(href);
   });
 
   window.addEventListener('popstate', e => { if (e.state?.url) navigate(e.state.url, false); });
   history.replaceState({ url: location.href }, '', location.href);
 
-  // Inicializar nav activo en carga inicial
+  // Actualizar nav activo en carga inicial
   updateActiveNav(location.href);
 
   // ===== REVEAL / STAGGER =====
@@ -127,7 +133,7 @@
     });
   }
 
-  // ===== SEARCH & MOBILE (CORREGIDO Y FUNCIONAL) =====
+  // ===== SEARCH & MOBILE (CORREGIDO Y ROBUSTO) =====
   function initSearchAndMobile() {
     const sBtn = $('search-btn');
     const sModal = $('search-modal');
@@ -152,9 +158,8 @@
     }
   }
 
-  // ===== HASH ROUTING (Razas / Clases / Manual si aplica) =====
+  // ===== HASH ROUTING (Razas / Clases) =====
   function initPageSpecificScripts() {
-    // Si la página usa listados con tarjetas que conmutan vistas por hash o ID
     if ($('razaList')) {
       const RAZAS = ["engendro","mecarionte","bestia","abisal","profundos","celestial","trasgoide","enanos","infernal","elfo","humano"];
       function route() {
