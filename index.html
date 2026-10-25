@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aetherna V2 · Códice de Fantasía Oscura</title>
-    <meta name="description" content="Códice de Aetherna V2: lore, razas, clases, épocas y hoja de ruta de un mundo de fantasía oscura.">
+    <meta name="description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
     <meta name="theme-color" content="#07051A">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Aetherna V2">
     <meta property="og:locale" content="es_ES">
     <meta property="og:title" content="Aetherna V2 · Códice de Fantasía Oscura">
-    <meta property="og:description" content="Códice de Aetherna V2: lore, razas, clases, épocas y hoja de ruta de un mundo de fantasía oscura.">
+    <meta property="og:description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
     <meta property="og:image" content="/fotos/Logo.png">
     <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/png" href="fotos/Logo.png">
@@ -77,6 +77,27 @@
                 transition: none !important;
             }
         }
+
+        /* Efecto dorado al pasar el ratón (tarjetas y botones), igual que en Razas y Clases */
+        .gold-card { overflow: hidden; transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .35s, opacity .7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .gold-card > * { position: relative; z-index: 2; }
+        .gold-card::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,.28), rgba(217,180,106,.10) 45%, transparent 70%); }
+        .gold-card::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .gold-card h3 { transition: color .3s, text-shadow .3s, letter-spacing .35s; }
+        .gold-card:hover { transform: translateY(-7px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .gold-card:hover::before { opacity: 1; }
+        .gold-card:hover::after { left: 130%; transition: left .8s ease; }
+        .gold-card:hover h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); letter-spacing: .04em; }
+        .gold-btn { position: relative; overflow: hidden; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s, color .3s; }
+        .gold-btn::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.28), transparent); transform: skewX(-18deg); }
+        .gold-btn:hover, .gold-btn:focus-visible { transform: translateY(-3px); border-color: #F0D79E; color: #FFF2CF;
+            box-shadow: 0 10px 24px rgba(0,0,0,.5), 0 0 24px rgba(217,180,106,.45), inset 0 0 0 1px rgba(240,215,158,.65); }
+        .gold-btn:hover::after { left: 130%; transition: left .7s ease; }
+        @media (prefers-reduced-motion: reduce) { .gold-card, .gold-card *, .gold-btn { transition: none !important; } .gold-card:hover, .gold-btn:hover { transform: none; } .gold-card::after, .gold-btn::after { display: none; } }
     </style>
     <link rel="stylesheet" href="tailwind.css">
 </head>
@@ -106,16 +127,16 @@
             </p>
 
             <div class="flex flex-col sm:flex-row gap-5 justify-center items-center w-full max-w-md">
-                <a href="lore.html" class="btn-primary-aetherna w-full sm:w-auto px-8 py-4 text-xs">
+                <a href="lore.html" class="btn-primary-aetherna gold-btn w-full sm:w-auto px-8 py-4 text-xs">
                     Explorar Lore
                 </a>
-                <a href="#discord" class="btn-normal w-full sm:w-auto px-8 py-4 text-xs">
+                <a href="#discord" class="btn-normal gold-btn w-full sm:w-auto px-8 py-4 text-xs">
                     Comunidad Discord
                 </a>
             </div>
         </div>
 
-        <a href="#ruta" class="z-10 text-aetherna-goldMain/70 hover:text-aetherna-goldLight transition-colors animate-bounce flex flex-col items-center gap-1 mt-8">
+        <a href="#origen" class="z-10 text-aetherna-goldMain/70 hover:text-aetherna-goldLight transition-colors animate-bounce flex flex-col items-center gap-1 mt-8">
             <span class="font-cinzel text-[9px] tracking-[0.3em] uppercase">Continuar</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
@@ -128,107 +149,8 @@
         <span class="separator-diamond font-cinzel">◆</span>
     </div>
 
-    <!-- SECCIÓN: HOJA DE RUTA INTERACTIVA -->
-    <section id="ruta" class="py-20 px-4 max-w-5xl mx-auto relative z-10">
-        <div class="text-center mb-16 reveal">
-            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">EVOLUCIÓN DE LAS ERAS</span>
-            <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">HOJA DE RUTA DEL MUNDO</h2>
-            <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
-            <p class="font-garamond italic text-aetherna-textSoft text-sm mt-3">Las siguientes eras de la civilización se encuentran totalmente ocultas bajo la bruma del destino.</p>
-        </div>
-
-        <div class="relative border-l-2 border-aetherna-goldMain/30 ml-4 sm:ml-32 space-y-12 pl-6 sm:pl-10">
-            
-            <!-- Era 1: Prehistoria / Origen -->
-            <div class="reveal relative group">
-                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-goldMain flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(157,108,240,0.6)]">
-                    <div class="w-2 h-2 rounded-full bg-aetherna-ember animate-ping"></div>
-                </div>
-                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain tracking-widest font-bold">FASE I</div>
-                
-                <div class="frame-panel p-6 border-aetherna-goldMain/60">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-[11px] font-cinzel px-2.5 py-0.5 bg-aetherna-ember/20 text-aetherna-ember border border-aetherna-ember/40 uppercase tracking-widest">Actual &bull; Prehistoria</span>
-                        <span class="sm:hidden font-cinzel text-xs text-aetherna-goldMain tracking-widest font-bold">FASE I</span>
-                    </div>
-                    <h3 class="font-cinzel text-xl text-aetherna-goldLight font-bold mt-2 mb-2">La Era de la Piedra y el Fuego</h3>
-                    <p class="font-garamond text-aetherna-textNormal text-base mb-4">Los primeros supervivientes caminan sobre un mundo virgen sin tecnología ni metales refinados.</p>
-                    <div class="border-t border-aetherna-goldMain/20 pt-3">
-                        <span class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-wider block mb-1">Desbloqueos de Era:</span>
-                        <ul class="font-garamond text-sm text-aetherna-textSoft space-y-1 list-disc list-inside">
-                            <li>Vestimentas de pieles y plantas silvestres.</li>
-                            <li>Armas toscas de piedra y madera elemental.</li>
-                            <li>Aparición de los primeros fragmentos de Metilatro en bruto.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Era 2 -->
-            <div class="reveal relative group">
-                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-bronzeDark flex items-center justify-center">
-                    <div class="w-2 h-2 rounded-full bg-aetherna-locked"></div>
-                </div>
-                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE II</div>
-                
-                <div class="frame-panel p-6 overflow-hidden">
-                    <div class="flex items-center justify-between mb-3 relative z-10">
-                        <span class="text-[11px] font-cinzel px-2.5 py-0.5 bg-aetherna-field text-aetherna-locked border border-aetherna-bronzeDark uppercase tracking-widest flex items-center gap-1.5">
-                            🔒 Bloqueado
-                        </span>
-                        <span class="sm:hidden font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE II</span>
-                    </div>
-
-                    <div class="unreadable-interior">
-                        <h3 class="font-cinzel text-xl text-aetherna-goldLight font-bold mt-1 mb-2">El Despertar de los Metales Antiguos</h3>
-                        <p class="font-garamond text-aetherna-textNormal text-base mb-4">Los clanes comienzan a desenterrar minerales raros y a comprender los primeros secretos de la forja en las cavernas.</p>
-                        <div class="border-t border-aetherna-goldMain/20 pt-3">
-                            <span class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-wider block mb-1">Desbloqueos Ocultos:</span>
-                            <ul class="font-garamond text-sm text-aetherna-textSoft space-y-1 list-disc list-inside">
-                                <li>Forja rudimentaria y aleaciones con fragmentos de Untali.</li>
-                                <li>Construcción de los primeros bastiones amurallados.</li>
-                                <li>Rutas comerciales y caravanas entre asentamientos.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Era 3 -->
-            <div class="reveal relative group">
-                <div class="absolute -left-[31px] sm:-left-[47px] top-1.5 w-6 h-6 rounded-full bg-aetherna-panel border-2 border-aetherna-bronzeDark flex items-center justify-center">
-                    <div class="w-2 h-2 rounded-full bg-aetherna-locked"></div>
-                </div>
-                <div class="absolute -left-28 sm:-left-36 top-1.5 hidden sm:block font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE III</div>
-                
-                <div class="frame-panel p-6 overflow-hidden">
-                    <div class="flex items-center justify-between mb-3 relative z-10">
-                        <span class="text-[11px] font-cinzel px-2.5 py-0.5 bg-aetherna-field text-aetherna-locked border border-aetherna-bronzeDark uppercase tracking-widest flex items-center gap-1.5">
-                            🔒 Bloqueado
-                        </span>
-                        <span class="sm:hidden font-cinzel text-xs text-aetherna-goldMain/80 tracking-widest font-bold">FASE III</span>
-                    </div>
-
-                    <div class="unreadable-interior">
-                        <h3 class="font-cinzel text-xl text-aetherna-goldLight font-bold mt-1 mb-2">La Era del Cosmirit y el Firmamento</h3>
-                        <p class="font-garamond text-aetherna-textNormal text-base mb-4">El misterioso material caído del cielo abre portales dimensionales y despierta vestigios de los antiguos planos divinos.</p>
-                        <div class="border-t border-aetherna-goldMain/20 pt-3">
-                            <span class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-wider block mb-1">Desbloqueos Ocultos:</span>
-                            <ul class="font-garamond text-sm text-aetherna-textSoft space-y-1 list-disc list-inside">
-                                <li>Manipulación arcana del mineral legendario Cosmirit.</li>
-                                <li>Incursiones en las fisuras de La Nada y reliquias astrales.</li>
-                                <li>Ascensión de facciones y contacto con los planos exteriores.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
     <!-- Lore (Resumen en Portada) -->
-    <section class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
+    <section id="origen" class="py-20 px-4 max-w-6xl mx-auto relative z-10 border-t border-aetherna-goldMain/15">
         <div class="text-center mb-16 reveal">
             <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">CRÓNICAS ASTRALES</span>
             <h2 class="font-title-deco text-3xl md:text-4xl text-aetherna-goldLight tracking-wider">EL ORIGEN DE LA PENUMBRA</h2>
@@ -236,7 +158,7 @@
         </div>
 
         <div class="grid md:grid-cols-3 gap-8 stagger-group">
-            <div class="reveal frame-panel p-8 flex flex-col justify-between">
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">I</div>
                     <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo que se Perdió</h3>
@@ -245,7 +167,7 @@
                 <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
             </div>
 
-            <div class="reveal frame-panel p-8 flex flex-col justify-between">
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">II</div>
                     <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">El Mundo Nuevo</h3>
@@ -254,7 +176,7 @@
                 <a href="lore.html" class="font-cinzel text-[11px] text-aetherna-goldMain uppercase tracking-[0.2em] flex items-center gap-2 hover:text-aetherna-goldHover">Leer Más →</a>
             </div>
 
-            <div class="reveal frame-panel p-8 flex flex-col justify-between">
+            <div class="reveal frame-panel gold-card p-8 flex flex-col justify-between">
                 <div>
                     <div class="w-10 h-10 bg-aetherna-field border border-aetherna-goldMain/30 text-aetherna-goldMain flex items-center justify-center mb-6 font-cinzel text-sm">III</div>
                     <h3 class="font-cinzel text-lg text-aetherna-goldLight font-bold mb-3 tracking-wide">La Nada</h3>
@@ -274,22 +196,22 @@
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-group">
-            <div class="reveal frame-panel p-6">
+            <div class="reveal frame-panel gold-card p-6">
                 <span class="inline-block px-2 py-0.5 bg-aetherna-success/20 text-aetherna-success text-[10px] font-cinzel uppercase tracking-widest mb-3 border border-aetherna-success/30">Abierto</span>
                 <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Humanos</h3>
                 <p class="font-garamond text-aetherna-textSoft text-sm">Pioneros de las ciudades y la diplomacia.</p>
             </div>
-            <div class="reveal frame-panel p-6">
+            <div class="reveal frame-panel gold-card p-6">
                 <span class="inline-block px-2 py-0.5 bg-aetherna-success/20 text-aetherna-success text-[10px] font-cinzel uppercase tracking-widest mb-3 border border-aetherna-success/30">Abierto</span>
                 <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Elfos Astrales</h3>
                 <p class="font-garamond text-aetherna-textSoft text-sm">Maestros del éter y sabios milenarios.</p>
             </div>
-            <div class="reveal frame-panel p-6">
+            <div class="reveal frame-panel gold-card p-6">
                 <span class="inline-block px-2 py-0.5 bg-aetherna-success/20 text-aetherna-success text-[10px] font-cinzel uppercase tracking-widest mb-3 border border-aetherna-success/30">Abierto</span>
                 <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Enanos Forjadores</h3>
                 <p class="font-garamond text-aetherna-textSoft text-sm">Inquebrantables en la batalla y la minería.</p>
             </div>
-            <div class="reveal frame-panel p-6">
+            <div class="reveal frame-panel gold-card p-6">
                 <span class="inline-block px-2 py-0.5 bg-aetherna-warning/20 text-aetherna-warning text-[10px] font-cinzel uppercase tracking-widest mb-3 border border-aetherna-warning/30">Restringido</span>
                 <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Malditos</h3>
                 <p class="font-garamond text-aetherna-textSoft text-sm">Entidades de las sombras y el sigilo.</p>
@@ -356,7 +278,7 @@
                 ¿Listo para pertenecer al nuevo mundo?
             </h2>
             <a href="https://discord.gg/gWMFjzKaPe" target="_blank" rel="noopener noreferrer"
-               class="btn-primary-aetherna inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
+               class="btn-primary-aetherna gold-btn inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.25em]">
                 <span>Unirse a Discord</span>
             </a>
         </div>
@@ -401,6 +323,16 @@
 
             document.querySelectorAll('.reveal').forEach(el => {
                 scrollObserver.observe(el);
+            });
+
+            // Efecto dorado: la luz sigue al cursor y el retardo escalonado del reveal no frena el hover
+            document.querySelectorAll('.gold-card').forEach(c => {
+                c.addEventListener('pointermove', ev => {
+                    const r = c.getBoundingClientRect();
+                    c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                    c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                });
+                c.addEventListener('pointerenter', () => { c.style.transitionDelay = '0s'; }, { once: true });
             });
         })();
     </script>
