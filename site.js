@@ -216,7 +216,7 @@
         <div class="mp-body">
             <div class="mp-info flex flex-col justify-center min-w-[96px] max-w-[150px] sm:min-w-[130px] sm:max-w-[180px]">
                 <span id="mp-title" class="font-cinzel text-[11px] text-aetherna-goldLight font-bold truncate">Epopee Cathedrale</span>
-                <span class="font-garamond text-[10px] text-aetherna-textMuted tracking-wider">Aleyda &bull; <span id="mp-time">0:00</span></span>
+                <span class="font-garamond text-[10px] text-aetherna-textMuted tracking-wider"><span id="mp-artist">Aleyda</span> &bull; <span id="mp-time">0:00</span></span>
                 <input id="mp-seek" class="mp-range mp-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Progreso de la canción">
             </div>
             <input id="mp-volume" class="mp-range mp-vol hidden sm:block" type="range" min="0" max="100" value="30" step="1" aria-label="Volumen" title="Volumen">
@@ -253,11 +253,14 @@
         audio.loop = false;
         const TRACKS = [
             { src: 'audio/Epopee Cathedrale - aleyda.mp3', title: 'Epopee Cathedrale', artist: 'Aleyda' },
-            { src: 'audio/The Last Stand of the Hero - aleyda.mp3', title: 'The Last Stand of the Hero', artist: 'Aleyda' }
+            { src: 'audio/The Last Stand of the Hero - aleyda.mp3', title: 'The Last Stand of the Hero', artist: 'Aleyda' },
+            // 'alt' = nombre alternativo del archivo, por si en la carpeta audio/ se llama distinto
+            { src: 'audio/The Celestial Oath.mp3', alt: 'audio/ The Celestial Oath.mp3', title: 'The Celestial Oath' },
+            { src: 'audio/Stars Cast the Dice.mp3', title: 'Stars Cast the Dice' }
         ];
         const disc = $('player-disc'), playBtn = $('capsule-play-btn'), playIcon = $('capsule-play-icon');
         const muteBtn = $('mp-mute-btn'), skipBtn = $('mp-skip-btn'), iconOn = $('mp-icon-on'), iconOff = $('mp-icon-off');
-        const timeEl = $('mp-time'), titleEl = $('mp-title'), seekEl = $('mp-seek'), volEl = $('mp-volume');
+        const timeEl = $('mp-time'), titleEl = $('mp-title'), artistEl = $('mp-artist'), seekEl = $('mp-seek'), volEl = $('mp-volume');
         const PLAY = '<path d="M8 5v14l11-7z"/>', PAUSE = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
         const KEY = 'aetherna_player';
         const st = { collapsed: false, muted: false, playing: false, time: 0, track: 0, vol: 0.3 };
@@ -279,19 +282,26 @@
             muteBtn.setAttribute('aria-label', audio.muted ? 'Activar sonido' : 'Silenciar');
             titleEl.textContent = TRACKS[st.track].title;
             titleEl.title = TRACKS[st.track].title;
+            if (artistEl) artistEl.textContent = TRACKS[st.track].artist || 'Aetherna V2';
         }
+        let playIntent = false, triedAlt = false, failures = 0, pendingSeek = st.time > 0 ? { track: st.track, time: st.time } : null;
         function loadTrack(i) {
             st.track = (i + TRACKS.length) % TRACKS.length;
+            triedAlt = false;
             audio.src = TRACKS[st.track].src;
             timeEl.textContent = '0:00'; seekEl.value = 0; pct(seekEl, 0);
             paint();
         }
-        const startPlaying = () => audio.play().then(() => { st.playing = true; paint(); save(); }).catch(() => { paint(); save(); });
-        function skip() { loadTrack(st.track + 1); st.time = 0; startPlaying(); }
+        const startPlaying = () => {
+            playIntent = true;
+            if (!audio.getAttribute('src')) loadTrack(st.track);      // aún no se había cargado ninguna (pantalla de entrada)
+            return audio.play().then(() => { st.playing = true; paint(); save(); }).catch(() => { paint(); save(); });
+        };
+        function skip() { pendingSeek = null; loadTrack(st.track + 1); st.time = 0; startPlaying(); }
 
         playBtn.addEventListener('click', () => {
             if (audio.paused) startPlaying();
-            else { audio.pause(); st.playing = false; paint(); save(); }
+            else { playIntent = false; audio.pause(); st.playing = false; paint(); save(); }
         });
         skipBtn.addEventListener('click', skip);
         muteBtn.addEventListener('click', () => { audio.muted = !audio.muted; st.muted = audio.muted; paint(); save(); });
@@ -309,6 +319,14 @@
         audio.addEventListener('play', paint);
         audio.addEventListener('pause', paint);
         audio.addEventListener('ended', skip);
+        audio.addEventListener('playing', () => { failures = 0; });
+        audio.addEventListener('error', () => {
+            const t = TRACKS[st.track];
+            if (t.alt && !triedAlt) { triedAlt = true; audio.src = t.alt; if (playIntent) audio.play().catch(() => {}); return; }
+            if (++failures >= TRACKS.length) { playIntent = false; st.playing = false; paint(); return; }   // ninguna carga: parar
+            pendingSeek = null; loadTrack(st.track + 1); st.time = 0;
+            if (playIntent) startPlaying();
+        });
         let lastSave = 0;
         audio.addEventListener('timeupdate', () => {
             timeEl.textContent = fmt(audio.currentTime);
@@ -323,12 +341,13 @@
         // Restaurar estado (por si la página se recarga del todo)
         audio.volume = st.vol; volEl.value = Math.round(st.vol * 100); pct(volEl, volEl.value);
         audio.muted = !!st.muted;
-        const resumeAt = st.time;
-        loadTrack(st.track);
         audio.addEventListener('loadedmetadata', () => {
-            if (resumeAt > 0 && isFinite(audio.duration) && resumeAt < audio.duration) audio.currentTime = resumeAt;
-        }, { once: true });
+            if (pendingSeek && pendingSeek.track === st.track && isFinite(audio.duration) && pendingSeek.time < audio.duration) audio.currentTime = pendingSeek.time;
+            pendingSeek = null;
+        });
+        if (gateOpen) paint(); else loadTrack(st.track);
         if (st.playing && !gateOpen) {
+            playIntent = true;
             audio.play().catch(() => {
                 const resume = () => { if (st.playing && !gateOpen) audio.play().catch(() => {}); };
                 ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, resume, { once: true }));
@@ -339,8 +358,12 @@
         window.__aethernaPlayer = {
             enter(withMusic) {
                 gateOpen = false;
-                if (withMusic) { audio.muted = false; st.muted = false; startPlaying(); }
-                else { audio.pause(); st.playing = false; paint(); save(); }
+                if (withMusic) {
+                    audio.muted = false; st.muted = false;
+                    pendingSeek = null; st.time = 0;
+                    loadTrack(Math.floor(Math.random() * TRACKS.length));   // una al azar de las canciones
+                    startPlaying();
+                } else { playIntent = false; audio.pause(); st.playing = false; paint(); save(); }
             }
         };
     })();
