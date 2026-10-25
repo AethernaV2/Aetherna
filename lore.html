@@ -42,10 +42,44 @@
             padding: 0 1rem;
             font-size: 12px;
         }
+        /* Aparición progresiva al bajar (usa "translate" para no chocar con el "transform" del hover) */
+        .reveal, .rv { --e: cubic-bezier(.16, 1, .3, 1); --d: .15s; }
         .reveal {
             opacity: 0;
-            transform: translateY(14px);
-            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            translate: 0 40px;
+            transition: opacity .8s var(--e), translate .8s var(--e), transform .35s var(--e), border-color .3s, box-shadow .35s;
+        }
+        .rv {
+            opacity: 0;
+            translate: 0 28px;
+            transition: opacity .7s var(--e) var(--d), translate .7s var(--e) var(--d), transform .35s var(--e), border-color .3s, box-shadow .35s;
+        }
+        .rv-l { translate: -48px 0; }
+        .rv-r { translate: 48px 0; }
+        @media (max-width: 1023px) { .rv-l, .rv-r { translate: 0 28px; } }
+        .reveal.active, .rv.active { opacity: 1; translate: 0 0; }
+        .rv-stagger > .rv:nth-child(2) { --d: .30s; }
+        .rv-stagger > .rv:nth-child(3) { --d: .45s; }
+
+        /* Efecto dorado al pasar el cursor: luz que sigue al ratón + borde dorado */
+        .lore-hover, .lore-lift { position: relative; }
+        .lore-hover::before, .lore-lift::before { content: ""; position: absolute; inset: 0; z-index: 1; opacity: 0; pointer-events: none; transition: opacity .35s;
+            background: radial-gradient(var(--r) circle at var(--mx, 50%) var(--my, 50%), rgba(157,108,240,var(--a)), rgba(217,180,106,calc(var(--a) * .5)) 45%, transparent 70%); }
+        .lore-hover { --r: 480px; --a: .13; }
+        .lore-lift { --r: 260px; --a: .26; overflow: hidden; }
+        .lore-lift::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background: linear-gradient(100deg, transparent, rgba(255,242,207,.13), transparent); transform: skewX(-18deg); }
+        .lore-hover h2, .lore-lift h3 { transition: color .3s, text-shadow .3s; }
+        .lore-hover:hover { border-color: rgba(217,180,106,.7); box-shadow: 0 0 34px rgba(157,108,240,.22), inset 0 0 0 3px rgba(217,180,106,.30); }
+        .lore-hover:hover::before, .lore-lift:hover::before { opacity: 1; }
+        .lore-hover:hover > div:first-child h2, .lore-lift:hover h3 { color: #FFF2CF; text-shadow: 0 0 14px rgba(196,160,255,.55); }
+        .lore-lift:hover { transform: translateY(-6px); border-color: rgba(217,180,106,.85);
+            box-shadow: 0 16px 34px rgba(0,0,0,.55), 0 0 26px rgba(157,108,240,.28), inset 0 0 0 3px rgba(217,180,106,.35); }
+        .lore-lift:hover::after { left: 130%; transition: left .8s ease; }
+        @media (prefers-reduced-motion: reduce) {
+            .reveal, .rv { opacity: 1 !important; translate: none !important; transition: none !important; }
+            .lore-lift:hover { transform: none; }
+            .lore-lift::after { display: none; }
         }
     </style>
     <link rel="stylesheet" href="tailwind.css">
@@ -75,14 +109,14 @@
         <div class="space-y-16">
             
             <!-- Capítulo I -->
-            <article class="reveal frame-panel p-6 sm:p-10">
-                <div class="flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
+            <article class="reveal lore-hover frame-panel p-6 sm:p-10">
+                <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo I</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">EL MUNDO QUE SE PERDIÓ</h2>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">
+                    <div class="rv lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">
                         <p>
                             Hace eones existía un solo mundo, el único habitable, y lo destruyó un estallido. Venía de una guerra, un conflicto de intereses que se había ido alargando por las creencias hacia distintos dioses. Aquella guerra, que ya se había vuelto eterna, terminó estallando por completo y borró de la faz de la existencia el único suelo donde se podía vivir.
                         </p>
@@ -91,7 +125,7 @@
                         </p>
                     </div>
 
-                    <div class="lg:col-span-5 relative frame-panel overflow-hidden group">
+                    <div class="rv rv-r lore-lift lg:col-span-5 relative frame-panel overflow-hidden group">
                         <img src="fotos/dioses.png" alt="Los Dioses contemplan la destrucción del antiguo mundo" class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-aetherna-bgMain/90 via-transparent to-transparent"></div>
                         <div class="absolute bottom-3 left-3 right-3 text-center">
@@ -102,14 +136,14 @@
             </article>
 
             <!-- Capítulo II -->
-            <article class="reveal frame-panel p-6 sm:p-10">
-                <div class="flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
+            <article class="reveal lore-hover frame-panel p-6 sm:p-10">
+                <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo II</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">EL MUNDO NUEVO</h2>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="lg:col-span-5 relative frame-panel overflow-hidden group order-2 lg:order-1">
+                    <div class="rv rv-l lore-lift lg:col-span-5 relative frame-panel overflow-hidden group order-2 lg:order-1">
                         <img src="fotos/mundo nuevo.png" alt="El nacimiento de un mundo nuevo" class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-aetherna-bgMain/90 via-transparent to-transparent"></div>
                         <div class="absolute bottom-3 left-3 right-3 text-center">
@@ -117,7 +151,7 @@
                         </div>
                     </div>
 
-                    <div class="lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed order-1 lg:order-2">
+                    <div class="rv lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed order-1 lg:order-2">
                         <p>
                             Decidieron crear un mundo nuevo. Volver a crear la vida, nuevos mortales, nuevas razas. Cada uno de los dioses puso parte de sí en una de esas razas. Cuando el mundo estuvo creado dejaron los conflictos a un lado y se resguardaron en sus planos, que ellos mismos habían creado.
                         </p>
@@ -129,14 +163,14 @@
             </article>
 
             <!-- Capítulo III -->
-            <article class="reveal frame-panel p-6 sm:p-10">
-                <div class="flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
+            <article class="reveal lore-hover frame-panel p-6 sm:p-10">
+                <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Capítulo III</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">LA NADA</h2>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">
+                    <div class="rv lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed">
                         <p>
                             En ese mundo, de tarde en tarde, aparece otra cosa. La gente le llama la Nada. Sucede muy de vez en cuando, en un sitio o en otro, y nadie atina a decir por qué toca ahí y no más allá. Empieza con una niebla blanca. Baja despacio, tan despacio que al principio se confunde con la humedad de la mañana. Se come el color y el sonido. Quien se queda dentro deja de estar.
                         </p>
@@ -145,7 +179,7 @@
                         </p>
                     </div>
 
-                    <div class="lg:col-span-5 relative frame-panel overflow-hidden group">
+                    <div class="rv rv-r lore-lift lg:col-span-5 relative frame-panel overflow-hidden group">
                         <img src="fotos/la nada.png" alt="La Nada consumiendo el mundo" class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-aetherna-bgMain/90 via-transparent to-transparent"></div>
                         <div class="absolute bottom-3 left-3 right-3 text-center">
@@ -156,8 +190,8 @@
             </article>
 
             <!-- Sección: Los Metales -->
-            <article class="reveal frame-panel p-6 sm:p-10">
-                <div class="text-center mb-10 pb-4 border-b border-aetherna-goldMain/20">
+            <article class="reveal lore-hover frame-panel p-6 sm:p-10">
+                <div class="rv text-center mb-10 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">MINERALOGÍA Y FORJA</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight mt-2">LOS METALES</h2>
                     <p class="font-garamond italic text-aetherna-parchment text-base max-w-2xl mx-auto mt-4 leading-relaxed">
@@ -165,8 +199,8 @@
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 rv-stagger">
+                    <div class="rv lore-lift bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
                         <div class="relative overflow-hidden mb-5 border border-aetherna-goldMain/20 h-48">
                             <img src="fotos/metilatro.png" alt="Metilatro" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                         </div>
@@ -178,7 +212,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
+                    <div class="rv lore-lift bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
                         <div class="relative overflow-hidden mb-5 border border-aetherna-goldMain/20 h-48">
                             <img src="fotos/untail.png" alt="Untali" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                         </div>
@@ -190,7 +224,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
+                    <div class="rv lore-lift bg-aetherna-field p-5 border border-aetherna-goldMain/30 flex flex-col group">
                         <div class="relative overflow-hidden mb-5 border border-aetherna-goldMain/20 h-48">
                             <img src="fotos/cosmirit.png" alt="Cosmirit" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
                         </div>
@@ -205,14 +239,14 @@
             </article>
 
             <!-- Sección: Cómo se vive ahora -->
-            <article class="reveal frame-panel p-6 sm:p-10">
-                <div class="flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
+            <article class="reveal lore-hover frame-panel p-6 sm:p-10">
+                <div class="rv flex items-center justify-between flex-wrap gap-4 mb-8 pb-4 border-b border-aetherna-goldMain/20">
                     <span class="text-xs font-cinzel px-3 py-1 bg-aetherna-field text-aetherna-goldMain border border-aetherna-goldMain/30">Sociedad</span>
                     <h2 class="font-cinzel text-2xl sm:text-3xl font-bold text-aetherna-goldLight">CÓMO SE VIVE AHORA</h2>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="lg:col-span-5 relative frame-panel overflow-hidden group order-2 lg:order-1">
+                    <div class="rv rv-l lore-lift lg:col-span-5 relative frame-panel overflow-hidden group order-2 lg:order-1">
                         <img src="fotos/ahora.png" alt="La vida cotidiana en el mundo actual" class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700">
                         <div class="absolute inset-0 bg-gradient-to-t from-aetherna-bgMain/90 via-transparent to-transparent"></div>
                         <div class="absolute bottom-3 left-3 right-3 text-center">
@@ -220,7 +254,7 @@
                         </div>
                     </div>
 
-                    <div class="lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed order-1 lg:order-2">
+                    <div class="rv lg:col-span-7 font-garamond text-aetherna-textNormal text-base sm:text-lg space-y-4 leading-relaxed order-1 lg:order-2">
                         <p>
                             A día de hoy el mundo sigue siendo bastante primitivo, tanto en la técnica como en la forma de vivir. La gente se viste con pieles de animales o con ropas hechas de plantas, cosas poco trabajadas, casi sin manufactura.
                         </p>
@@ -254,18 +288,25 @@
     <script src="site.js"></script>
     <script data-page>
         (function () {
-            function revealOnScroll() {
-                const reveals = document.querySelectorAll('.reveal');
-                for (let i = 0; i < reveals.length; i++) {
-                    const windowHeight = window.innerHeight;
-                    const elementTop = reveals[i].getBoundingClientRect().top;
-                    if (elementTop < windowHeight - 60) {
-                        reveals[i].classList.add('active');
-                    }
-                }
+            // Aparecer al bajar y ocultarse al subir (igual que en la portada)
+            const els = document.querySelectorAll('.reveal, .rv');
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver(entries => {
+                    entries.forEach(en => en.target.classList.toggle('active', en.isIntersecting));
+                }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+                els.forEach(el => io.observe(el));
+            } else {
+                els.forEach(el => el.classList.add('active'));
             }
-            window.addEventListener('scroll', revealOnScroll);
-            revealOnScroll();
+
+            // Efecto dorado: la luz sigue al cursor
+            document.querySelectorAll('.lore-hover, .lore-lift').forEach(c => {
+                c.addEventListener('pointermove', ev => {
+                    const r = c.getBoundingClientRect();
+                    c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                    c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                });
+            });
         })();
     </script>
 </body>
