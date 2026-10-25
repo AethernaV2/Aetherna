@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aetherna V2 · Manual de Clases y Disciplinas</title>
+    <meta name="description" content="Manual de clases y disciplinas de Aetherna V2: capítulos, tramos de nivel, técnicas y conjuros.">
+    <meta name="theme-color" content="#07051A">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Aetherna V2">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:title" content="Aetherna V2 · Manual de Clases y Disciplinas">
+    <meta property="og:description" content="Manual de clases y disciplinas de Aetherna V2: capítulos, tramos de nivel, técnicas y conjuros.">
+    <meta property="og:image" content="/fotos/Logo.png">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/png" href="fotos/Logo.png">
+
+    <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <!-- Estilos comunes + estilos propios de esta página + Tailwind compilado (ver LEEME.md) -->
+    <link rel="stylesheet" href="styles.css">
+    <style id="page-style">
+        .separator-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin: 2.5rem 0;
+        }
+        .separator-line::before, .separator-line::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(217,180,106,.4), transparent);
+        }
+        .separator-diamond {
+            color: #D9B46A;
+            padding: 0 1rem;
+            font-size: 12px;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+    </style>
+    <link rel="stylesheet" href="tailwind.css">
+</head>
+<body class="relative selection:bg-aetherna-goldMain selection:text-aetherna-bgMain">
+    <!-- Fondo cósmico + brasas (los anima site.js) -->
+    <canvas id="cosmos-bg" width="128" height="72" aria-hidden="true"></canvas>
+    <canvas id="cosmos-stars" aria-hidden="true"></canvas>
+    <canvas id="ember-canvas" aria-hidden="true"></canvas>
+
+    <div id="page-root">
+    <main class="pt-32 pb-24 px-4 max-w-5xl mx-auto relative z-10">
+        
+        <div class="text-center mb-16 reveal">
+            <span class="font-cinzel text-aetherna-goldMain text-[10px] tracking-[0.35em] uppercase block mb-2">ROLEPLAY REDUX &bull; SISTEMA D20 &bull; EDICIÓN PvP &bull; NIVELES 1 A 20</span>
+            <h1 class="font-title-deco text-4xl sm:text-6xl text-aetherna-goldLight tracking-wider mb-4">MANUAL DE CLASES</h1>
+            <div class="w-24 h-[1px] bg-aetherna-goldMain mx-auto mb-6"></div>
+            <p class="font-garamond italic text-aetherna-parchment text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Haz clic en cualquier recuadro de clase para desplegar sus rasgos, tablas de progresión y todas sus técnicas y conjuros detallados por tramos de poder.
+            </p>
+        </div>
+
+        <!-- Cómo Usar Este Manual -->
+        <div class="reveal frame-panel p-8 mb-16">
+            <h3 class="font-cinzel text-aetherna-goldLight text-xl font-bold mb-6 tracking-wider text-center border-b border-aetherna-goldMain/20 pb-3">CÓMO USAR ESTE MANUAL</h3>
+            <div class="grid md:grid-cols-2 gap-8 font-garamond text-aetherna-textNormal text-base leading-relaxed">
+                <div class="space-y-4">
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tu personaje</strong>
+                        <p>Elige una raza y una clase (perks públicos de tu ficha). Reparte tus 7 puntos de atributo como indica tu clase. El narrador te asigna el perk de tu nivel; al subir de nivel cambia por el nuevo y haces un descanso largo.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Competencia</strong>
+                        <p>+2 en niveles 1–4, +3 en 5–8, +4 en 9–12, +5 en 13–16 y +6 en 17–20. Se suma a tus ataques con el atributo principal y con DES, y a las salvaciones de tu clase.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tramos de poder</strong>
+                        <p>Tus técnicas tienen cuatro versiones: I (niveles 1–4), II (5–10), III (11–16) y IV (17–20). Al cambiar de tramo, todas tus técnicas mejoran a la vez.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Tiradas</strong>
+                        <p><strong>Ataque vs CA:</strong> d20 + atributo + competencia contra la CA del objetivo; un 20 natural es crítico (dobla los dados).<br><strong>Salvación:</strong> el objetivo tira d20 + su salvación contra tu dificultad; según la técnica, recibe la mitad o nada.</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Clase de armadura</strong>
+                        <p>10 + pechera + escudo + DES. Armadura ligera: CA 12 + DES. Media: CA 15 + DES (máximo +2). Pesada: CA 18, sin DES. Escudo: +2. La calidad de la pechera suma +1, +2 o +3. Monje y Bárbaro sin armadura: CA 12 + DES.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Combate</strong>
+                        <p>Al empezar, todos tiran Iniciativa (d20 + DES) y actúan de mayor a menor. En tu turno usa Inicio de turno (aplica el daño continuo que sufras), una técnica y Fin de turno (termina los efectos de un turno y cuenta las mejoras). Al acabar, Fin de combate.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Huecos y usos</strong>
+                        <p>Una técnica con «Hueco N+» gasta un hueco de nivel N. Si te quedan huecos de nivel superior pero no de ese, usa Usar hueco de nivel N+1 como nivel N. Las técnicas «a voluntad» no gastan nada.</p>
+                    </div>
+                    <div>
+                        <strong class="text-aetherna-goldMain font-cinzel block mb-1">Descansos</strong>
+                        <p><strong>Descanso largo:</strong> solo en un campamento. Recupera todos los PV, huecos y usos, y te da 2 descansos cortos.<br><strong>Descanso corto:</strong> recupera 1/4 de tus PV máximos, los huecos de pacto, el ki, los dados de superioridad y 1 uso de Furia y de Segundo aliento.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 border-t border-aetherna-goldMain/20 pt-6">
+                <h3 class="font-cinzel text-aetherna-goldLight text-lg font-bold mb-1 tracking-wider text-center">RAZAS</h3>
+                <p class="font-garamond italic text-sm text-aetherna-textMuted text-center mb-4">Cada raza da +2 a una habilidad.</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Humano</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Persuasión</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Elfos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Percepción</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Enanos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Historia</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Infernales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Intimidación</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Trasgoide</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Sigilo</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Celestiales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Medicina</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Profundos</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Atletismo</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Abisales</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Arcanos</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Bestias</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Supervivencia</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Mecarionte</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Investigación</span>
+                    </div>
+                    <div class="bg-aetherna-field p-3 border border-aetherna-goldMain/20 text-center">
+                        <span class="font-cinzel text-sm font-bold text-aetherna-goldLight block">Engendros</span>
+                        <span class="font-garamond text-sm text-aetherna-textSoft"><span class="text-aetherna-ember font-bold">+2</span> Engaño</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Índice Interactivo -->
+        <div class="reveal frame-panel p-6 mb-16">
+            <h3 class="font-cinzel text-aetherna-goldLight text-lg font-bold mb-4 tracking-wider text-center">ÍNDICE DE CLASES (CLIC PARA DESPLEGAR)</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-center">
+                <button onclick="toggleClase('barbaro')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">1. Bárbaro</button>
+                <button onclick="toggleClase('bardo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">2. Bardo</button>
+                <button onclick="toggleClase('luchador')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">3. Luchador</button>
+                <button onclick="toggleClase('monje')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">4. Monje</button>
+                <button onclick="toggleClase('explorador')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">5. Explorador</button>
+                <button onclick="toggleClase('artificiero')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">6. Artificiero</button>
+                <button onclick="toggleClase('picaro')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">7. Pícaro</button>
+                <button onclick="toggleClase('hechicero')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">8. Hechicero</button>
+                <button onclick="toggleClase('brujo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">9. Brujo</button>
+                <button onclick="toggleClase('clerigo')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">10. Clérigo</button>
+                <button onclick="toggleClase('paladin')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">11. Paladín</button>
+                <button onclick="toggleClase('psionico')" class="p-2 bg-aetherna-field border border-aetherna-goldMain/20 text-aetherna-textSoft hover:text-aetherna-goldLight hover:border-aetherna-goldMain text-sm font-cinzel transition-all cursor-pointer">12. Psiónico</button>
+            </div>
+        </div>
+
+        <!-- ACORDEÓN DE LAS 12 CLASES CON TODAS SUS TÉCNICAS Y TRAMOS -->
+        <div class="space-y-8">
+            
+            <!-- 1. BÁRBARO -->
+            <section id="sec-barbaro" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('barbaro')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo I</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">1. Bárbaro — Luchador salvaje</h2>
+                    </div>
+                    <span id="icon-barbaro" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-barbaro" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/barbaro.htm"></div>
+            </section>
+
+            <!-- 2. BARDO -->
+            <section id="sec-bardo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('bardo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo II</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">2. Bardo — Apoyo y control mental</h2>
+                    </div>
+                    <span id="icon-bardo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-bardo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/bardo.htm"></div>
+            </section>
+
+            <!-- 3. LUCHADOR -->
+            <section id="sec-luchador" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('luchador')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo III</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">3. Luchador — Defensor marcial</h2>
+                    </div>
+                    <span id="icon-luchador" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-luchador" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/luchador.htm"></div>
+            </section>
+
+            <!-- 4. MONJE -->
+            <section id="sec-monje" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('monje')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo IV</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">4. Monje — Luchador ágil y controlador</h2>
+                    </div>
+                    <span id="icon-monje" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-monje" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/monje.htm"></div>
+            </section>
+
+            <!-- 5. EXPLORADOR -->
+            <section id="sec-explorador" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('explorador')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo V</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">5. Explorador — Tirador y cazador</h2>
+                    </div>
+                    <span id="icon-explorador" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-explorador" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/explorador.htm"></div>
+            </section>
+
+            <!-- 6. ARTIFICIERO -->
+            <section id="sec-artificiero" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('artificiero')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VI</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">6. Artificiero — Inventor y apoyo técnico</h2>
+                    </div>
+                    <span id="icon-artificiero" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-artificiero" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/artificiero.htm"></div>
+            </section>
+
+            <!-- 7. PÍCARO -->
+            <section id="sec-picaro" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('picaro')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">7. Pícaro — Asesino de un solo objetivo</h2>
+                    </div>
+                    <span id="icon-picaro" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-picaro" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/picaro.htm"></div>
+            </section>
+
+            <!-- 8. HECHICERO -->
+            <section id="sec-hechicero" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('hechicero')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo VIII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">8. Hechicero — Artillería de magia innata</h2>
+                    </div>
+                    <span id="icon-hechicero" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-hechicero" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/hechicero.htm"></div>
+            </section>
+
+            <!-- 9. BRUJO -->
+            <section id="sec-brujo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('brujo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo IX</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">9. Brujo — Pactos y maldiciones</h2>
+                    </div>
+                    <span id="icon-brujo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-brujo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/brujo.htm"></div>
+            </section>
+
+            <!-- 10. CLÉRIGO -->
+            <section id="sec-clerigo" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('clerigo')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo X</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">10. Clérigo — Sanador y castigador divino</h2>
+                    </div>
+                    <span id="icon-clerigo" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-clerigo" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/clerigo.htm"></div>
+            </section>
+
+            <!-- 11. PALADÍN -->
+            <section id="sec-paladin" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('paladin')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo XI</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">11. Paladín — Defensor sagrado y sanador</h2>
+                    </div>
+                    <span id="icon-paladin" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-paladin" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/paladin.htm"></div>
+            </section>
+
+            <!-- 12. PSIÓNICO -->
+            <section id="sec-psionico" class="reveal frame-panel overflow-hidden">
+                <button onclick="toggleClase('psionico')" class="w-full p-6 text-left flex items-center justify-between bg-aetherna-field hover:bg-aetherna-panel transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <span class="font-cinzel text-xs text-aetherna-goldMain uppercase tracking-widest">Capítulo XII</span>
+                        <h2 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight">12. Psiónico — Mente sobre materia</h2>
+                    </div>
+                    <span id="icon-psionico" class="font-cinzel text-aetherna-goldMain text-lg transition-transform duration-300">▼</span>
+                </button>
+                <div id="content-psionico" class="hidden p-8 border-t border-aetherna-goldMain/20 space-y-6" data-frag="fragments/manual/psionico.htm"></div>
+            </section>
+
+
+        </div>
+
+        <div class="text-center mt-16 reveal">
+            <a href="index.html" class="btn-normal inline-flex items-center gap-2 px-8 py-4 text-xs">
+                ← Volver al Códice Principal
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="py-8 px-4 border-t border-aetherna-goldMain/15 text-center text-xs text-aetherna-textMuted relative z-10">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 font-garamond">
+            <div>&copy; Aetherna V2 &bull; Manual de Clases y Disciplinas Oficiales</div>
+        </div>
+    </footer>
+    </div>
+
+    <script src="site.js"></script>
+    <script data-page>
+        (function () {
+            // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
+            const frags = {};
+            function fetchFrag(url) {
+                return frags[url] || (frags[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }));
+            }
+            function loadFrag(el) {
+                if (el.dataset.loaded) return Promise.resolve();
+                return fetchFrag(el.dataset.frag)
+                    .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
+                    .catch(() => {
+                        delete frags[el.dataset.frag];
+                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
+                    });
+            }
+            const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
+
+            async function toggleClase(id) {
+                const content = document.getElementById('content-' + id);
+                if (content.dataset.frag && !content.dataset.loaded) { content.innerHTML = LOADING; await loadFrag(content); }
+                const icon = document.getElementById('icon-' + id);
+
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                    document.getElementById('sec-' + id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    content.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+
+            function revealOnScroll() {
+                const reveals = document.querySelectorAll('.reveal');
+                for (let i = 0; i < reveals.length; i++) {
+                    if (reveals[i].getBoundingClientRect().top < window.innerHeight - 60) {
+                        reveals[i].classList.add('active');
+                    }
+                }
+            }
+            window.addEventListener('scroll', revealOnScroll);
+            revealOnScroll();
+
+            // expuesto porque el HTML lo llama con onclick=""
+            window.toggleClase = toggleClase;
+
+            // enlaces del buscador: manual#sec-clase abre ese capítulo
+            if (location.hash.indexOf('#sec-') === 0) toggleClase(location.hash.slice(5));
+        })();
+    </script>
+</body>
+</html>
