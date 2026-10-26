@@ -195,23 +195,23 @@
             <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
         </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-group">
-            <div class="reveal frame-panel gold-card p-6">
-                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Humanos</h3>
-                <p class="font-garamond text-aetherna-textSoft text-sm">Pioneros de las ciudades y la diplomacia.</p>
-            </div>
-            <div class="reveal frame-panel gold-card p-6">
-                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Elfos Astrales</h3>
-                <p class="font-garamond text-aetherna-textSoft text-sm">Maestros del éter y sabios milenarios.</p>
-            </div>
-            <div class="reveal frame-panel gold-card p-6">
-                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Enanos Forjadores</h3>
-                <p class="font-garamond text-aetherna-textSoft text-sm">Inquebrantables en la batalla y la minería.</p>
-            </div>
-            <div class="reveal frame-panel gold-card p-6">
-                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Malditos</h3>
-                <p class="font-garamond text-aetherna-textSoft text-sm">Entidades de las sombras y el sigilo.</p>
-            </div>
+        <div id="razas-grid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-group">
+            <a href="razas.html#humano" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Humano</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Versatilidad incansable</p>
+            </a>
+            <a href="razas.html#elfo" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Elfo</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Elegancia milenaria y arquería</p>
+            </a>
+            <a href="razas.html#enanos" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Enanos</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Maestros de la piedra y forja</p>
+            </a>
+            <a href="razas.html#infernal" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">Infernal</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">Parias con cornamentas</p>
+            </a>
         </div>
     </section>
 
@@ -223,7 +223,7 @@
             <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group">
+        <div id="clases-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group">
             <a href="clases.html#luchador" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
                 <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="sr-only">Luchador</h3>
@@ -298,6 +298,33 @@
     <script src="site.js"></script>
     <script data-page>
         (function () {
+            // ---- Selección al azar: cada visita a la portada enseña otras razas y otras clases ----
+            // Para añadir una raza o clase nueva a este sorteo, añádela a su lista (id = el del enlace: razas.html#id / clases.html#id).
+            // Para cambiar cuántas salen, cambia el número de cada pintar(...). Los oficios se añadirán aquí cuando existan.
+            const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Parias con cornamentas"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
+            const CLASES = [{"id": "barbaro", "name": "Bárbaro", "sub": "Luchador de Vanguardia"}, {"id": "bardo", "name": "Bardo", "sub": "Sonomancia"}, {"id": "luchador", "name": "Luchador", "sub": "Defensor Marcial"}, {"id": "monje", "name": "Monje", "sub": "Artista Marcial"}, {"id": "explorador", "name": "Explorador", "sub": "Tirador y Cazador"}, {"id": "artificiero", "name": "Artificiero", "sub": "Inventor y Apoyo Técnico"}, {"id": "picaro", "name": "Pícaro", "sub": "Asesino de un solo objetivo"}, {"id": "hechicero", "name": "Hechicero", "sub": "Artillería de Magia Innata"}, {"id": "brujo", "name": "Brujo", "sub": "Pactos y Maldiciones"}, {"id": "clerigo", "name": "Clérigo", "sub": "Sanador y Castigador Divino"}, {"id": "paladin", "name": "Paladín", "sub": "Defensor Sagrado y Sanador"}, {"id": "psionico", "name": "Psiónico", "sub": "Mente sobre Materia"}];
+            const barajar = lista => {
+                const a = lista.slice();
+                for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+                return a;
+            };
+            const pintar = (idGrid, lista, cuantas, tarjeta) => {
+                const grid = document.getElementById(idGrid);
+                if (grid) grid.innerHTML = barajar(lista).slice(0, cuantas).map(tarjeta).join('');
+            };
+            pintar('razas-grid', RAZAS, 4, r => `
+            <a href="razas.html#${r.id}" class="reveal frame-panel gold-card p-6 block">
+                <h3 class="font-cinzel text-base font-bold text-aetherna-goldLight mb-2">${r.name}</h3>
+                <p class="font-garamond text-aetherna-textSoft text-sm">${r.tag}</p>
+            </a>`);
+            pintar('clases-grid', CLASES, 3, c => `
+            <a href="clases.html#${c.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${c.id}.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <h3 class="sr-only">${c.name}</h3>
+                <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${c.sub}</p>
+                <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
+            </a>`);
+
             // Aplicar retrasos escalonados a los elementos dentro de filas/grillas
             document.querySelectorAll('.stagger-group').forEach(group => {
                 const items = group.querySelectorAll('.reveal');
