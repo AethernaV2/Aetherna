@@ -27,7 +27,10 @@
     // Si falta el archivo de un emblema (fotos/<clase>.png), se oculta en vez de enseñar una imagen rota
     nativeAdd.call(document, 'error', e => {
         const t = e.target;
-        if (t && t.tagName === 'IMG' && t.classList.contains('emblem')) t.style.display = 'none';
+        if (t && t.tagName === 'IMG' && t.classList.contains('emblem')) {
+            t.style.display = 'none';
+            const card = t.closest('.emblem-card'); if (card) card.classList.add('no-emblem');
+        }
     }, true);
 
     // ------------------------------------------------------------------
