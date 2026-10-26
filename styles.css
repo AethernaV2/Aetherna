@@ -131,3 +131,30 @@ body { background-color: #05030C;
 /* ===== Pantalla de entrada ===== */
 .gate-logo { animation: mp-spin 24s linear infinite; filter: drop-shadow(0 0 18px rgba(157,108,240,.5)); }
 #search-input::-webkit-search-cancel-button, #search-input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+
+/* ===== Emblemas de clase (fotos/<clase>.png) ===== */
+.emblem { display: block; height: auto; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,.55)) drop-shadow(0 0 8px rgba(217,180,106,.15));
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; }
+.clase-card:hover .emblem, .clase-card:focus-visible .emblem, .gold-card:hover .emblem { transform: translateY(-3px) scale(1.07);
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(217,180,106,.5)); }
+#search-results a.sr:hover .emblem, #search-results a.sr.is-active .emblem { transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) { .emblem { transition: none; } .clase-card:hover .emblem, .gold-card:hover .emblem { transform: none; } }
+
+/* ===== Tarjeta de clase con el emblema asomando por encima del marco ===== */
+.frame-panel.emblem-card { overflow: visible; padding-top: 148px; }
+.frame-panel.emblem-card > .emblem-stage { position: absolute; z-index: 3; left: 50%; top: -76px; width: 240px; height: 230px; margin-left: -120px; pointer-events: none; }
+/* escenario: halo dorado/violeta + hexágono tenue detrás del emblema */
+.emblem-stage::before { content: ""; position: absolute; left: -10px; right: -10px; top: 6px; bottom: -6px; z-index: -1; opacity: .7; filter: blur(8px);
+    background: radial-gradient(closest-side, rgba(217,180,106,.38), rgba(157,108,240,.24) 58%, transparent 80%); transition: opacity .4s, transform .5s cubic-bezier(.2,.8,.2,1); }
+.emblem-stage::after { content: ""; position: absolute; left: 50%; top: 50%; width: 262px; height: 262px; margin: -131px 0 0 -131px; z-index: -1; opacity: .28; transition: opacity .4s, transform .9s cubic-bezier(.2,.8,.2,1);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 93,27 93,73 50,97 7,73 7,27' fill='none' stroke='%23D9B46A' stroke-width='.7'/%3E%3Cpolygon points='50,12 85,32 85,68 50,88 15,68 15,32' fill='none' stroke='%23D9B46A' stroke-width='.35'/%3E%3C/svg%3E") center / contain no-repeat; }
+.emblem-stage .emblem { position: absolute; left: 50%; top: 50%; width: 210px; height: 210px; margin: -105px 0 0 -105px; max-width: none; }
+.frame-panel.emblem-card:hover .emblem-stage::before, .frame-panel.emblem-card:focus-visible .emblem-stage::before { opacity: 1; transform: scale(1.12); }
+.frame-panel.emblem-card:hover .emblem-stage::after, .frame-panel.emblem-card:focus-visible .emblem-stage::after { opacity: .55; transform: rotate(30deg) scale(1.05); }
+/* el destello pasa ahora DENTRO de la tarjeta (antes se recortaba con overflow:hidden, que ya no se puede usar) */
+.frame-panel.emblem-card::after { left: 0; top: 0; width: 100%; height: 100%; transform: none; background: linear-gradient(100deg, transparent 38%, rgba(255,242,207,.15) 50%, transparent 62%) no-repeat; background-size: 260% 100%; background-position: 130% 0; }
+.frame-panel.emblem-card:hover::after { left: 0; background-position: -30% 0; transition: background-position .8s ease; }
+/* si falta el archivo del emblema, la tarjeta se queda como una normal */
+.frame-panel.emblem-card.no-emblem { padding-top: 1.25rem; }
+.emblem-card.no-emblem > .emblem-stage { display: none; }
+@media (prefers-reduced-motion: reduce) { .emblem-stage::before, .emblem-stage::after { transition: none; } .frame-panel.emblem-card:hover::after { transition: none; } }
