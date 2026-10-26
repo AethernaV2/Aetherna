@@ -24,6 +24,12 @@
         set(k, v, which) { try { area(which).setItem(k, v); } catch (e) {} }
     };
 
+    // Si falta el archivo de un emblema (fotos/<clase>.png), se oculta en vez de enseñar una imagen rota
+    nativeAdd.call(document, 'error', e => {
+        const t = e.target;
+        if (t && t.tagName === 'IMG' && t.classList.contains('emblem')) t.style.display = 'none';
+    }, true);
+
     // ------------------------------------------------------------------
     // 1) Cabecera + buscador
     // ------------------------------------------------------------------
@@ -130,6 +136,12 @@
         return (start > 0 ? '…' : '') + out + (end < e.x.length ? '…' : '');
     }
 
+    // Emblema de la clase en los resultados (Clases y Manual): la clase sale del enlace (clases.html#barbaro / manual.html#sec-barbaro)
+    function emblemFor(e) {
+        const m = (e.p === 'Clases' || e.p === 'Manual') && /#(?:sec-)?([a-z]+)$/.exec(e.u || '');
+        return m ? '<img src="fotos/' + m[1] + '.png" alt="" width="40" height="40" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10">' : '';
+    }
+
     function runSearch(q) {
         const box = $('search-results');
         const terms = fold(q).split(/\s+/).filter(Boolean);
@@ -152,10 +164,12 @@
         hits.sort((a, b) => b[0] - a[0]);
         if (!hits.length) { box.innerHTML = '<p class="font-garamond italic text-aetherna-textMuted text-sm">Nada en los archivos con «' + esc(q) + '». Prueba con otra palabra.</p>'; return; }
         box.innerHTML = hits.slice(0, 8).map(([, e], i) =>
-            '<a href="' + esc(e.u) + '" role="option" data-i="' + i + '" class="sr block px-3 py-2 border border-aetherna-goldMain/15 bg-aetherna-field/60 hover:border-aetherna-goldMain/60">' +
+            '<a href="' + esc(e.u) + '" role="option" data-i="' + i + '" class="sr flex items-center gap-3 px-3 py-2 border border-aetherna-goldMain/15 bg-aetherna-field/60 hover:border-aetherna-goldMain/60">' +
+            emblemFor(e) +
+            '<span class="block min-w-0 flex-1">' +
             '<span class="block font-cinzel text-[10px] uppercase tracking-[0.2em] text-aetherna-goldMain">' + esc(e.p) + '</span>' +
             '<span class="block font-cinzel text-sm font-bold text-aetherna-goldLight">' + esc(e.s) + '</span>' +
-            '<span class="block font-garamond text-sm text-aetherna-textSoft leading-snug">' + snippet(e, terms) + '</span></a>').join('');
+            '<span class="block font-garamond text-sm text-aetherna-textSoft leading-snug">' + snippet(e, terms) + '</span></span></a>').join('');
     }
 
     function setActive(i) {
