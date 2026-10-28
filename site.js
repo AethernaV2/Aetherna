@@ -24,7 +24,7 @@
         set(k, v, which) { try { area(which).setItem(k, v); } catch (e) {} }
     };
 
-    // Si falta el archivo de un emblema (fotos/<clase>.png), se oculta en vez de enseñar una imagen rota
+    // Si falta el archivo de un emblema (fotos/<clase>.webp), se oculta en vez de enseñar una imagen rota
     nativeAdd.call(document, 'error', e => {
         const t = e.target;
         if (t && t.tagName === 'IMG' && t.classList.contains('emblem')) {
@@ -142,7 +142,7 @@
     // Emblema de la clase en los resultados (Clases y Manual): la clase sale del enlace (clases.html#barbaro / manual.html#sec-barbaro)
     function emblemFor(e) {
         const m = (e.p === 'Clases' || e.p === 'Manual' || e.p === 'Oficios') && /#(?:sec-)?([a-z]+)$/.exec(e.u || '');
-        return m ? '<img src="fotos/' + m[1] + '.png" alt="" width="40" height="40" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10">' : '';
+        return m ? '<img src="fotos/' + m[1] + '.webp" alt="" width="40" height="40" loading="lazy" decoding="async" class="emblem flex-none w-10 h-10">' : '';
     }
 
     function runSearch(q) {

@@ -11,8 +11,11 @@
     <meta property="og:locale" content="es_ES">
     <meta property="og:title" content="Aetherna V2 · Códice de Fantasía Oscura">
     <meta property="og:description" content="Códice de Aetherna V2: lore, razas, clases y las épocas de Aetherna, un mundo de fantasía oscura.">
-    <meta property="og:image" content="/fotos/Logo.png">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/">
     <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/Logo.png">
     <link rel="icon" type="image/png" href="fotos/Logo.png">
 
     <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
@@ -99,7 +102,7 @@
         .gold-btn:hover::after { left: 130%; transition: left .7s ease; }
         @media (prefers-reduced-motion: reduce) { .gold-card, .gold-card *, .gold-btn { transition: none !important; } .gold-card:hover, .gold-btn:hover { transform: none; } .gold-card::after, .gold-btn::after { display: none; } }
 
-        /* Oficios en portada: si falta la ilustración (fotos/<oficio>.png) la tarjeta enseña el nombre y se ve siempre */
+        /* Oficios en portada: si falta la ilustración (fotos/<oficio>.webp) la tarjeta enseña el nombre y se ve siempre */
         .of-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
         .emblem-card.no-emblem .of-name { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; margin-bottom: .5rem; }
         .frame-panel.emblem-card.emblem-reveal.no-emblem { background-color: rgba(14, 11, 38, 0.86); border-color: rgba(217,180,106,.22); box-shadow: inset 0 0 0 3px rgba(90, 74, 138, 0.3); }
@@ -114,6 +117,10 @@
         .home-news-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .home-news-media svg { position: relative; z-index: 2; transition: transform .35s cubic-bezier(.2,.8,.2,1), filter .35s; filter: drop-shadow(0 0 10px rgba(157,108,240,.5)); }
         .gold-card:hover .home-news-media svg { transform: scale(1.12); filter: drop-shadow(0 0 16px rgba(240,215,158,.7)); }
+        .home-news-more { display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 56rem; margin: 1.5rem auto 0; }
+        @media (min-width: 768px) { .home-news-more { grid-template-columns: 1fr 1fr; } }
+        .home-news-sm { grid-template-columns: 1fr; margin: 0; }
+        .home-news-sm .home-news-media { min-height: 140px; border-right: 0; border-bottom: 1px solid rgba(217,180,106,.25); }
         .home-news-meta { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #B9A98A; }
         .home-news-tag { padding: .1rem .55rem; border: 1px solid rgba(217,180,106,.4); color: #D9B46A; }
     </style>
@@ -243,19 +250,19 @@
 
         <div id="clases-grid" class="grid md:grid-cols-3 gap-x-8 gap-y-28 pt-20 stagger-group">
             <a href="clases.html#luchador" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
-                <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/luchador.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="sr-only">Luchador</h3>
                 <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Defensor Marcial</p>
                 <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
             </a>
             <a href="clases.html#hechicero" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
-                <span class="emblem-stage" aria-hidden="true"><img src="fotos/hechicero.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/hechicero.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="sr-only">Hechicero</h3>
                 <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Artillería de Magia Innata</p>
                 <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
             </a>
             <a href="clases.html#picaro" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
-                <span class="emblem-stage" aria-hidden="true"><img src="fotos/picaro.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/picaro.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="sr-only">Pícaro</h3>
                 <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">Asesino de un solo objetivo</p>
                 <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
@@ -282,7 +289,7 @@
             <div class="w-20 h-[1px] bg-aetherna-goldMain mx-auto mt-4"></div>
         </div>
 
-        <div class="stagger-group">
+        <div class="stagger-group" id="news-home">
             <a href="noticias.html#teaser-aetherna-v2" class="reveal frame-panel gold-card home-news">
                 <span class="home-news-media">
                     <img src="fotos/noticia-teaser-aetherna-v2.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
@@ -331,7 +338,7 @@
             // Para cambiar cuántas salen, cambia el número de cada pintar(...). Los oficios (oficios.html#id) funcionan igual.
             const RAZAS = [{"id": "engendro", "name": "Engendro", "tag": "Formas libres y exóticas"}, {"id": "mecarionte", "name": "Mecarionte", "tag": "Carne y metal antiguo"}, {"id": "bestia", "name": "Bestia", "tag": "Híbridos salvajes"}, {"id": "abisal", "name": "Abisal", "tag": "Tentáculos y ojos insondables"}, {"id": "profundos", "name": "Profundos", "tag": "Señores de las mareas"}, {"id": "celestial", "name": "Celestial", "tag": "Esencia de luz y sabiduría"}, {"id": "trasgoide", "name": "Trasgoide", "tag": "Fuerza bruta y robustez"}, {"id": "enanos", "name": "Enanos", "tag": "Maestros de la piedra y forja"}, {"id": "infernal", "name": "Infernal", "tag": "Parias con cornamentas"}, {"id": "elfo", "name": "Elfo", "tag": "Elegancia milenaria y arquería"}, {"id": "humano", "name": "Humano", "tag": "Versatilidad incansable"}];
             const CLASES = [{"id": "barbaro", "name": "Bárbaro", "sub": "Luchador de Vanguardia"}, {"id": "bardo", "name": "Bardo", "sub": "Sonomancia"}, {"id": "luchador", "name": "Luchador", "sub": "Defensor Marcial"}, {"id": "monje", "name": "Monje", "sub": "Artista Marcial"}, {"id": "explorador", "name": "Explorador", "sub": "Tirador y Cazador"}, {"id": "artificiero", "name": "Artificiero", "sub": "Inventor y Apoyo Técnico"}, {"id": "picaro", "name": "Pícaro", "sub": "Asesino de un solo objetivo"}, {"id": "hechicero", "name": "Hechicero", "sub": "Artillería de Magia Innata"}, {"id": "brujo", "name": "Brujo", "sub": "Pactos y Maldiciones"}, {"id": "clerigo", "name": "Clérigo", "sub": "Sanador y Castigador Divino"}, {"id": "paladin", "name": "Paladín", "sub": "Defensor Sagrado y Sanador"}, {"id": "psionico", "name": "Psiónico", "sub": "Mente sobre Materia"}];
-            const OFICIOS = [{"id": "alquimista", "name": "Alquimista", "sub": "Maestro de químicos y pócimas"}, {"id": "cocinero", "name": "Cocinero", "sub": "Artista culinario"}, {"id": "herrero", "name": "Herrero", "sub": "Maestro del metal y el fuego"}, {"id": "joyero", "name": "Joyero", "sub": "Artista de las piedras preciosas"}, {"id": "herborista", "name": "Herborista", "sub": "Recolector de plantas"}, {"id": "cazador", "name": "Cazador", "sub": "Rastreador y depredador"}, {"id": "minero", "name": "Minero", "sub": "Explorador del subsuelo"}, {"id": "pescador", "name": "Pescador", "sub": "Señor de ríos y mares"}, {"id": "lenador", "name": "Leñador", "sub": "Talador de bosques"}];
+            const OFICIOS = [{"id": "alquimista", "name": "Alquimista", "sub": "Maestro de químicos y pócimas"}, {"id": "cocinero", "name": "Cocineros", "sub": "Artista culinario"}, {"id": "herrero", "name": "Herreros", "sub": "Maestro del metal y el fuego"}, {"id": "joyero", "name": "Joyeros", "sub": "Artista de las piedras preciosas"}, {"id": "herborista", "name": "Herboristas", "sub": "Recolector de plantas"}, {"id": "cazador", "name": "Cazadores", "sub": "Rastreador y depredador"}, {"id": "minero", "name": "Mineros", "sub": "Explorador del subsuelo"}, {"id": "pescador", "name": "Pescador", "sub": "Señor de ríos y mares"}, {"id": "lenador", "name": "Leñador", "sub": "Talador de bosques"}];
             const barajar = lista => {
                 const a = lista.slice();
                 for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
@@ -348,7 +355,7 @@
             </a>`);
             pintar('clases-grid', CLASES, 3, c => `
             <a href="clases.html#${c.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
-                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${c.id}.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${c.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="sr-only">${c.name}</h3>
                 <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${c.sub}</p>
                 <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
@@ -356,7 +363,7 @@
 
             pintar('oficios-grid', OFICIOS, 3, o => `
             <a href="oficios.html#${o.id}" class="reveal frame-panel gold-card emblem-card emblem-reveal p-6 block text-center">
-                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${o.id}.png" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
+                <span class="emblem-stage" aria-hidden="true"><img src="fotos/${o.id}.webp" alt="" width="210" height="210" loading="lazy" decoding="async" class="emblem"></span>
                 <h3 class="of-name font-cinzel text-base font-bold text-aetherna-goldLight">${o.name}</h3>
                 <p class="font-garamond italic text-aetherna-textSoft text-base mb-3">${o.sub}</p>
                 <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain">Ver ficha &rarr;</span>
@@ -400,8 +407,37 @@
                 });
                 c.addEventListener('pointerenter', () => { c.style.transitionDelay = '0s'; }, { once: true });
             });
+
+            // ---- Últimos anuncios: las 3 noticias más recientes de noticias.json (la misma lista que usa noticias.html) ----
+            const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            fetch('noticias.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
+                const N = list.slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || '')).slice(0, 3);
+                const box = document.getElementById('news-home');
+                if (!box || !N.length) return;
+                const card = (n, i) => `
+                <a href="noticias.html#${escH(n.id)}" class="reveal frame-panel gold-card home-news${i ? ' home-news-sm' : ''}">
+                    <span class="home-news-media">
+                        <img src="fotos/noticia-${escH(n.id)}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                        ${n.video ? '<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>' : ''}
+                    </span>
+                    <span class="block p-6 sm:p-8">
+                        <span class="home-news-meta"><span class="home-news-tag">${escH(n.tag)}</span><time datetime="${escH(n.iso)}">${escH(n.date)}</time></span>
+                        <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">${escH(n.title)}</h3>
+                        <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">${escH(n.summary)}</span>
+                        <span class="font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
+                    </span>
+                </a>`;
+                box.innerHTML = card(N[0], 0) + (N.length > 1 ? '<div class="home-news-more">' + N.slice(1).map(n => card(n, 1)).join('') + '</div>' : '');
+                box.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
+                box.querySelectorAll('.gold-card').forEach(c => {
+                    c.addEventListener('pointermove', ev => {
+                        const r = c.getBoundingClientRect();
+                        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                    });
+                });
+            }).catch(() => { /* si falla, se queda la noticia que ya está escrita en el HTML */ });
         })();
     </script>
 </body>
 </html>
-

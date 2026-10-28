@@ -11,8 +11,11 @@
     <meta property="og:locale" content="es_ES">
     <meta property="og:title" content="Aetherna V2 · Noticias del Códice">
     <meta property="og:description" content="Últimas noticias y anuncios de Aetherna V2: teaser, novedades y eventos.">
-    <meta property="og:image" content="/fotos/Logo.png">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:image" content="https://aetherna-cyan.vercel.app/fotos/noticia-teaser-aetherna-v2.jpg">
+    <meta property="og:url" content="https://aetherna-cyan.vercel.app/noticias">
+    <link rel="canonical" href="https://aetherna-cyan.vercel.app/noticias">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://aetherna-cyan.vercel.app/fotos/noticia-teaser-aetherna-v2.jpg">
     <link rel="icon" type="image/png" href="fotos/Logo.png">
 
     <!-- Google Fonts: Cinzel Decorative, Cinzel & EB Garamond -->
@@ -29,8 +32,9 @@
             transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .nw-grid { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
-        @media (min-width: 768px) { .nw-grid { grid-template-columns: 1fr 1fr; } .nw-feat { grid-column: 1 / -1; display: grid; grid-template-columns: 1.15fr 1fr; } }
+                .nw-item { display: block; }
         .nw-item[hidden] { display: none; }
+        @media (min-width: 768px) { .nw-grid { grid-template-columns: 1fr 1fr; } .nw-feat { grid-column: 1 / -1; display: grid; grid-template-columns: 1.15fr 1fr; } }
         .nw-media { position: relative; display: flex; align-items: center; justify-content: center; min-height: 190px; aspect-ratio: 16 / 9; overflow: hidden;
             background: radial-gradient(120% 120% at 30% 20%, #44207F 0%, #151034 60%, #0B0824 100%); border-bottom: 1px solid rgba(217,180,106,.25); }
         .nw-feat .nw-media { aspect-ratio: auto; min-height: 260px; border-bottom: 0; border-right: 1px solid rgba(217,180,106,.25); }
@@ -88,25 +92,10 @@
         <!-- Contenedor de Clases -->
         <div id="clsList">
             <p class="font-garamond text-center text-aetherna-textSoft mb-8">Pulsa una noticia para leerla completa.</p>
-            
-            <div class="nw-grid">
-                <a href="#teaser-aetherna-v2" data-tag="Teaser" class="nw-item nw-feat clase-card block frame-panel text-left">
-                    <span class="nw-media">
-                        <img src="fotos/noticia-teaser-aetherna-v2.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
-                        <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>
-                    </span>
-                    <span class="nw-body">
-                        <span class="nw-meta"><span class="nw-tag">Teaser</span><time datetime="2026-10-28">28 de octubre de 2026</time></span>
-                        <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">Teaser de Aetherna V2</h3>
-                        <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">El Códice se abre al mundo: contempla el teaser oficial de Aetherna V2.</span>
-                        <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
-                    </span>
-                </a>
-            </div>
+            <div id="nw-filters" class="nw-filters" role="group" aria-label="Filtrar noticias" hidden></div>
+            <div class="nw-grid" id="nw-grid"><p class="font-garamond italic text-center text-aetherna-textMuted py-16" style="grid-column:1/-1">Cargando noticias…</p></div>
         </div>
-        <div id="clsDetail">
-            <div id="det-teaser-aetherna-v2" class="clase-det space-y-8" hidden data-frag="fragments/noticias/teaser-aetherna-v2.htm"></div>
-        </div>
+        <div id="clsDetail"></div>
 
         <!-- Botón para volver al inicio -->
         <div class="text-center mt-16 reveal">
@@ -138,7 +127,7 @@
             window.addEventListener('scroll', revealOnScroll);
             revealOnScroll();
 
-            // Carga bajo demanda del detalle (fragments/...): la página pesa poco y cada sección se descarga al abrirla
+            // Carga bajo demanda del detalle (fragments/noticias/<id>.htm)
             const frags = {};
             function fetchFrag(url) {
                 return frags[url] || (frags[url] = fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); }));
@@ -149,38 +138,73 @@
                     .then(h => { el.innerHTML = h; el.dataset.loaded = '1'; })
                     .catch(() => {
                         delete frags[el.dataset.frag];
-                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta sección. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
+                        el.innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">No se pudo cargar esta noticia. <a href="#" class="text-aetherna-goldMain underline">Volver</a></p>';
                     });
             }
             const LOADING = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16">Abriendo el códice…</p>';
+            const PLAY = '<svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(11,8,36,.55)" stroke="#D9B46A" stroke-width="2"/><path d="M26 20l20 12-20 12z" fill="#F0D79E"/></svg>';
+            const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-            const CLASES = ["teaser-aetherna-v2"];
-            function route() {
-                const k = location.hash.slice(1);
-                const ok = CLASES.includes(k);
-                document.getElementById('clsList').hidden = ok;
-                document.querySelectorAll('.clase-det').forEach(d => { d.hidden = !(ok && d.id === 'det-' + k); });
-                if (ok) { const el = document.getElementById('det-' + k); if (!el.dataset.loaded) { el.innerHTML = LOADING; loadFrag(el).then(revealOnScroll); } }
-                document.querySelectorAll('#clsDetail video').forEach(v => { if (v.closest('[hidden]')) v.pause(); });
-                window.scrollTo({ top: 0 });
-                revealOnScroll();
-            }
-            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointermove', ev => {
-                const r = c.getBoundingClientRect();
-                c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
-                c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
-            }));
-            document.querySelectorAll('.nw-filter').forEach(b => b.addEventListener('click', () => {
-                document.querySelectorAll('.nw-filter').forEach(x => x.classList.toggle('is-on', x === b));
-                document.querySelectorAll('.nw-item').forEach(c => { c.hidden = !!b.dataset.f && c.dataset.tag !== b.dataset.f; });
-            }));
-            window.addEventListener('hashchange', route);
-            route();
+            // La lista de noticias vive en noticias.json (la misma que lee la portada). Más recientes primero.
+            fetch('noticias.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(list => {
+                const NEWS = list.slice().sort((a, b) => (b.iso || '').localeCompare(a.iso || ''));
+                const IDS = NEWS.map(n => n.id);
+                const grid = document.getElementById('nw-grid');
+                grid.innerHTML = NEWS.map((n, i) => `
+                <a href="#${esc(n.id)}" data-tag="${esc(n.tag)}" class="nw-item${i === 0 ? ' nw-feat' : ''} clase-card frame-panel text-left">
+                    <span class="nw-media">
+                        <img src="fotos/noticia-${esc(n.id)}.jpg" alt="" loading="lazy" decoding="async" onerror="this.remove()">
+                        ${n.video ? PLAY : ''}
+                    </span>
+                    <span class="nw-body">
+                        <span class="nw-meta"><span class="nw-tag">${esc(n.tag)}</span><time datetime="${esc(n.iso)}">${esc(n.date)}</time></span>
+                        <h3 class="font-cinzel text-xl sm:text-2xl font-bold text-aetherna-goldLight mb-2">${esc(n.title)}</h3>
+                        <span class="font-garamond text-aetherna-textNormal text-base block leading-relaxed">${esc(n.summary)}</span>
+                        <span class="abrir font-cinzel text-[11px] tracking-[0.2em] uppercase text-aetherna-goldMain block mt-4">Leer noticia &rarr;</span>
+                    </span>
+                </a>`).join('');
+                document.getElementById('clsDetail').innerHTML = NEWS.map(n =>
+                    `<div id="det-${esc(n.id)}" class="clase-det space-y-8" hidden data-frag="fragments/noticias/${esc(n.id)}.htm"></div>`).join('');
 
-            document.querySelectorAll('.clase-card').forEach(c => c.addEventListener('pointerenter', () => {
-                const el = document.getElementById('det-' + (c.getAttribute('href') || '').slice(1));
-                if (el && el.dataset.frag && !el.dataset.loaded) fetchFrag(el.dataset.frag).catch(() => { delete frags[el.dataset.frag]; });
-            }, { once: true }));
+                // Filtros por etiqueta: solo salen si hay más de una
+                const tags = [...new Set(NEWS.map(n => n.tag))];
+                const fbox = document.getElementById('nw-filters');
+                if (tags.length > 1) {
+                    fbox.innerHTML = ['Todas'].concat(tags).map((t, i) =>
+                        `<button type="button" class="nw-filter${i === 0 ? ' is-on' : ''}" data-f="${i === 0 ? '' : esc(t)}">${esc(t)}</button>`).join('');
+                    fbox.hidden = false;
+                    fbox.querySelectorAll('.nw-filter').forEach(b => b.addEventListener('click', () => {
+                        fbox.querySelectorAll('.nw-filter').forEach(x => x.classList.toggle('is-on', x === b));
+                        grid.querySelectorAll('.nw-item').forEach(c => { c.hidden = !!b.dataset.f && c.dataset.tag !== b.dataset.f; });
+                    }));
+                }
+
+                function route() {
+                    const k = location.hash.slice(1);
+                    const ok = IDS.includes(k);
+                    document.getElementById('clsList').hidden = ok;
+                    document.querySelectorAll('.clase-det').forEach(d => { d.hidden = !(ok && d.id === 'det-' + k); });
+                    if (ok) { const el = document.getElementById('det-' + k); if (!el.dataset.loaded) { el.innerHTML = LOADING; loadFrag(el).then(revealOnScroll); } }
+                    document.querySelectorAll('#clsDetail video').forEach(v => { if (v.closest('[hidden]')) v.pause(); });
+                    window.scrollTo({ top: 0 });
+                    revealOnScroll();
+                }
+                grid.querySelectorAll('.clase-card').forEach(c => {
+                    c.addEventListener('pointermove', ev => {
+                        const r = c.getBoundingClientRect();
+                        c.style.setProperty('--mx', (ev.clientX - r.left) + 'px');
+                        c.style.setProperty('--my', (ev.clientY - r.top) + 'px');
+                    });
+                    c.addEventListener('pointerenter', () => {
+                        const el = document.getElementById('det-' + (c.getAttribute('href') || '').slice(1));
+                        if (el && el.dataset.frag && !el.dataset.loaded) fetchFrag(el.dataset.frag).catch(() => { delete frags[el.dataset.frag]; });
+                    }, { once: true });
+                });
+                window.addEventListener('hashchange', route);
+                route();
+            }).catch(() => {
+                document.getElementById('nw-grid').innerHTML = '<p class="font-garamond italic text-center text-aetherna-textMuted py-16" style="grid-column:1/-1">No se pudieron cargar las noticias. Inténtalo de nuevo más tarde.</p>';
+            });
         })();
     </script>
 </body>
